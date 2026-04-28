@@ -33,6 +33,7 @@ let preguntasGuardadas = [];
 let modoEdicion = false;
 let preguntaEditandoId = null;
 let scoresGlobal = { 1: 0, 2: 0 };
+let preguntaAnterior = "";
 
 let presentadorStartScreen, presentadorMainContent;
 let btnEnviarPregunta, preguntaInput;
@@ -46,6 +47,8 @@ let btnPausarJuego, btnReanudarJuego, btnReiniciarTodo;
 let btnIniciarJuegos;
 let preguntaEl, respuestasEl, turnoActualBox, scoresBox, scoresGlobalBox, erroresBox, contenedorJugadores;
 let questionsList, btnNuevaPregunta, btnEditarPregunta, btnEliminarPregunta, btnGuardarPregunta, btnCancelarEdicion;
+let mensajePresentadorInput, btnEnviarMensaje, btnLimpiarMensaje;
+let advertenciaModal, btnCerrarAdvertencia, advertenciaCallback;
 
 function normalizarCompleto(texto) {
   return texto.toLowerCase()
@@ -93,6 +96,13 @@ function obtenerClavesDesdeInput(textoRespuesta, clavesManual, index) {
   }
   palabrasClave = palabrasClave.filter(c => c.length >= 3);
   return palabrasClave;
+}
+
+function mostrarAdvertenciaPregunta(callback) {
+  if (advertenciaModal) {
+    advertenciaModal.classList.remove("hidden");
+    advertenciaCallback = callback;
+  }
 }
 
 async function guardarPreguntaEnLista(pregunta, respuestas) {
@@ -665,6 +675,47 @@ document.addEventListener("DOMContentLoaded", () => {
   btnEliminarPregunta = document.getElementById("btnEliminarPregunta");
   btnGuardarPregunta = document.getElementById("btnGuardarPregunta");
   btnCancelarEdicion = document.getElementById("btnCancelarEdicion");
+  mensajePresentadorInput = document.getElementById("mensajePresentadorInput");
+  btnEnviarMensaje = document.getElementById("btnEnviarMensaje");
+  btnLimpiarMensaje = document.getElementById("btnLimpiarMensaje");
+  advertenciaModal = document.getElementById("advertenciaPreguntaModal");
+  btnCerrarAdvertencia = document.getElementById("btnCerrarAdvertencia");
+  
+  const preguntaGuardada = localStorage.getItem("preguntaAnterior");
+  if (preguntaGuardada) {
+    preguntaAnterior = preguntaGuardada;
+    console.log("📝 Pregunta anterior cargada:", preguntaAnterior);
+  }
+  
+  if (btnCerrarAdvertencia) {
+    btnCerrarAdvertencia.addEventListener("click", () => {
+      if (advertenciaModal) advertenciaModal.classList.add("hidden");
+      if (advertenciaCallback) {
+        advertenciaCallback();
+        advertenciaCallback = null;
+      }
+    });
+  }
+  
+  if (btnEnviarMensaje) {
+    btnEnviarMensaje.addEventListener("click", () => {
+      const mensaje = mensajePresentadorInput?.value.trim();
+      if (mensaje) {
+        update(ref(db, "estadoJuego"), { mensajePresentador: mensaje });
+        alert("✅ Mensaje enviado a todos los jugadores");
+      } else {
+        alert("⚠️ Escribe un mensaje primero");
+      }
+    });
+  }
+  
+  if (btnLimpiarMensaje) {
+    btnLimpiarMensaje.addEventListener("click", () => {
+      update(ref(db, "estadoJuego"), { mensajePresentador: null });
+      if (mensajePresentadorInput) mensajePresentadorInput.value = "";
+      alert("🧹 Mensaje eliminado de la pantalla de jugadores");
+    });
+  }
   
   if (btnCancelarEdicion) btnCancelarEdicion.classList.add("hidden");
   
@@ -786,32 +837,29 @@ document.addEventListener("DOMContentLoaded", () => {
   
   if (btnNuevaRonda) {
     btnNuevaRonda.addEventListener("click", () => {
-      console.log("🔄 Iniciando nueva ronda...");
+      const preguntaActiva = preguntaInput?.value.trim();
+      const respuestasCompletas = Array.from(document.querySelectorAll(".respuestaInput")).every(input => input.value.trim() !== "");
       
-      update(ref(db, "estadoJuego"), {
-        respuestasReveladas: {},
-        errores: { 1: 0, 2: 0 },
-        scores: { 1: 0, 2: 0 },
-        turno: { equipo: 1, jugadorId: null },
-        fase: "ronda",
-        reset: Date.now()
-      });
-      
-      setTimeout(() => {
-        update(ref(db, "estadoJuego"), {
-          fase: "jugando"
+      if (!preguntaActiva || !respuestasCompletas) {
+        mostrarAdvertenciaPregunta(() => {
+          console.log("Presentador ha visto la advertencia");
         });
-        console.log("✅ Nueva ronda iniciada - Volviendo a modo jugando");
-      }, 3000);
+        return;
+      }
       
-      alert("🔄 Nueva ronda iniciada! Los puntos se han reiniciado.");
-    });
-  }
-  
-  if (btnTerminarRonda) {
-    btnTerminarRonda.addEventListener("click", () => {
-      if (confirm("🏁 ¿Terminar la ronda actual y pasar a la siguiente?")) {
-        console.log("🏁 Terminando ronda manualmente...");
+      if (preguntaAnterior && preguntaActiva === preguntaAnterior) {
+        alert("⚠️ ¡DEBES CAMBIAR LA PREGUNTA!\n\nNo puedes usar la misma pregunta de la ronda anterior. Escribe una pregunta nueva antes de iniciar la siguiente ronda.");
+        mostrarAdvertenciaPregunta(() => {
+          console.log("Presentador ha visto la advertencia - pregunta duplicada");
+        });
+        return;
+      }
+      
+      if (confirm("🔄 ¿Iniciar una NUEVA RONDA? Esto reiniciará los puntos de la ronda actual.")) {
+        console.log("🔄 Iniciando nueva ronda...");
+        
+        preguntaAnterior = preguntaActiva;
+        localStorage.setItem("preguntaAnterior", preguntaAnterior);
         
         update(ref(db, "estadoJuego"), {
           respuestasReveladas: {},
@@ -819,6 +867,7 @@ document.addEventListener("DOMContentLoaded", () => {
           scores: { 1: 0, 2: 0 },
           turno: { equipo: 1, jugadorId: null },
           fase: "ronda",
+          mensajePresentador: null,
           reset: Date.now()
         });
         
@@ -826,53 +875,110 @@ document.addEventListener("DOMContentLoaded", () => {
           update(ref(db, "estadoJuego"), {
             fase: "jugando"
           });
-          console.log("✅ Nueva ronda iniciada después de terminación manual");
+          console.log("✅ Nueva ronda iniciada - Volviendo a modo jugando");
         }, 3000);
         
-        alert("🏁 Ronda terminada. Preparando siguiente ronda...");
+        alert("🔄 Nueva ronda iniciada! Los puntos se han reiniciado.\n📝 Recuerda: La próxima ronda necesitarás una pregunta NUEVA.");
       }
     });
   }
   
+  if (btnTerminarRonda) {
+    btnTerminarRonda.addEventListener("click", () => {
+      const preguntaActiva = preguntaInput?.value.trim();
+      const respuestasCompletas = Array.from(document.querySelectorAll(".respuestaInput")).every(input => input.value.trim() !== "");
+      
+      if (!preguntaActiva || !respuestasCompletas) {
+        mostrarAdvertenciaPregunta(() => {
+          console.log("Presentador ha visto la advertencia");
+        });
+        return;
+      }
+      
+      if (preguntaAnterior && preguntaActiva === preguntaAnterior) {
+        alert("⚠️ ¡DEBES CAMBIAR LA PREGUNTA!\n\nNo puedes terminar la ronda y usar la misma pregunta. Escribe una pregunta NUEVA antes de continuar.");
+        mostrarAdvertenciaPregunta(() => {
+          console.log("Presentador ha visto la advertencia - pregunta duplicada en terminar ronda");
+        });
+        return;
+      }
+
+      if (confirm("🏁 ¿Terminar la ronda actual y pasar a la siguiente?")) {
+        console.log("🏁 Terminando ronda manualmente...");
+        
+        preguntaAnterior = preguntaActiva;
+        localStorage.setItem("preguntaAnterior", preguntaAnterior);
+        
+        get(ref(db, "estadoJuego")).then((snap) => {
+          const data = snap.val();
+          let ganadorTexto = "EMPATE";
+          let ganadorNumero = 0;
+          let colorGanador = "#ffcc00";
+          
+          if (data.scores[1] > data.scores[2]) {
+            ganadorTexto = "EQUIPO 1 (VERDE)";
+            ganadorNumero = 1;
+            colorGanador = "#00ff80";
+          } else if (data.scores[2] > data.scores[1]) {
+            ganadorTexto = "EQUIPO 2 (AZUL)";
+            ganadorNumero = 2;
+            colorGanador = "#00ffff";
+          }
+          
+          alert(`🏆 RONDA TERMINADA - GANÓ ${ganadorTexto} 🏆\nPuntuación final: ${data.scores[1]} - ${data.scores[2]}`);
+          
+          update(ref(db, "estadoJuego"), {
+            respuestasReveladas: {},
+            errores: { 1: 0, 2: 0 },
+            scores: { 1: 0, 2: 0 },
+            turno: { equipo: 1, jugadorId: null },
+            fase: "ronda",
+            mensajeFinalRonda: `🏆 Ronda terminada. Ganó ${ganadorTexto} con ${data.scores[ganadorNumero]} puntos. Preparando siguiente ronda...`,
+            celebracionRonda: {
+              activo: true,
+              ganador: ganadorNumero,
+              texto: ganadorTexto,
+              puntos: data.scores[ganadorNumero],
+              color: colorGanador
+            },
+            reset: Date.now()
+          });
+          
+          setTimeout(() => {
+            update(ref(db, "estadoJuego"), {
+              fase: "jugando",
+              mensajeFinalRonda: null,
+              celebracionRonda: null
+            });
+            console.log("✅ Nueva ronda iniciada después de terminación manual");
+          }, 6000);
+          
+          alert("📝 Recuerda: Para la próxima ronda, escribe una pregunta NUEVA y haz clic en 'ENVIAR PREGUNTA' antes de continuar.");
+        });
+      }
+    });
+  }
+  
+  // ========== JUEGO TERMINADO - CORREGIDO ==========
   if (btnJuegoTerminado) {
     btnJuegoTerminado.addEventListener("click", () => {
-      if (confirm("🏆 ¿Finalizar el juego completamente? Se mostrará el ganador y se reiniciará todo.")) {
+      if (confirm("🏆 ¿Finalizar el juego completamente? Se mostrará el ganador y los jugadores podrán salir.")) {
         console.log("🏆 Finalizando juego...");
         
-        const ganador = scoresGlobal[1] > scoresGlobal[2] ? 1 : (scoresGlobal[2] > scoresGlobal[1] ? 2 : 0);
-        const mensaje = ganador === 0 ? "¡EMPATE!" : `¡EQUIPO ${ganador} GANA!`;
-        
-        alert(`🏆 JUEGO TERMINADO - ${mensaje}\nPuntos finales: ${scoresGlobal[1]} - ${scoresGlobal[2]}`);
-        
-        update(ref(db, "estadoJuego"), {
-          fase: "final",
-          reset: Date.now()
-        });
-        
-        setTimeout(() => {
-          const updates = {};
-          Object.keys(jugadoresGlobal).forEach(id => {
-            updates[`jugadores/${id}`] = null;
-          });
+        get(ref(db, "estadoJuego")).then((snap) => {
+          const data = snap.val();
+          const scoresGlobalActuales = data.scoresGlobal || { 1: 0, 2: 0 };
           
-          updates["estadoJuego"] = {
-            turno: { equipo: null, jugadorId: null },
-            pausado: false,
-            respuestasReveladas: {},
-            scores: { 1: 0, 2: 0 },
-            scoresGlobal: { 1: 0, 2: 0 },
-            errores: { 1: 0, 2: 0 },
-            fase: "esperando",
-            preguntaActual: "",
-            respuestasActuales: [],
+          update(ref(db, "estadoJuego"), {
+            fase: "final",
+            juegoTerminado: true,
+            scoresGlobal: scoresGlobalActuales,
             reset: Date.now()
-          };
-          
-          update(ref(db), updates).then(() => {
-            console.log("✅ Juego finalizado y reseteado completamente");
-            alert("✅ Juego finalizado. Puedes iniciar una nueva partida.");
+          }).then(() => {
+            console.log("✅ Señal de juego terminado enviada a jugadores");
+            alert("🏆 JUEGO TERMINADO - Los jugadores verán la pantalla final");
           });
-        }, 5000);
+        });
       }
     });
   }
@@ -907,6 +1013,8 @@ document.addEventListener("DOMContentLoaded", () => {
           scores: { 1: 0, 2: 0 }, scoresGlobal: { 1: 0, 2: 0 }, errores: { 1: 0, 2: 0 },
           fase: "esperando", preguntaActual: "", respuestasActuales: [], reset: Date.now()
         };
+        preguntaAnterior = "";
+        localStorage.removeItem("preguntaAnterior");
         update(ref(db), updates).then(() => alert("✅ Juego reseteado completamente"));
       }
     });

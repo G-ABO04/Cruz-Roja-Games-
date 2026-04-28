@@ -1,4 +1,4 @@
-/* ================= script.js VERSIÓN FINAL - CON BLOQUEO POR ERRORES ================= */
+/* ================= script.js VERSIÓN FINAL - CON PANTALLA DE JUEGO TERMINADO FUNCIONAL ================= */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -43,11 +43,14 @@ let tabInstanceId = null;
 const TAB_CLAIM_EXPIRY_MS = 10000;
 
 let estadoJuegoCache = null;
+let juegoTerminadoPermanente = false;
 
-let startScreen, playerScreen, gameOverScreen, blockedModal, expulsadoModal, rondaTransicionScreen, gameWrapper;
+let startScreen, playerScreen, gameOverScreen, blockedModal, expulsadoModal, rondaTransicionScreen, gameWrapper, rondaAnuncioModal, rondaAnuncioTexto, btnCerrarAnuncioRonda;
 let btnStart, btnJoin, btnEnviar, btnNext, btnRegresarInicio, currentTurnBadge, currentTurnPlayerName;
 let inputRespuesta, turnoTxt, questionText, globalScoreEl, inputLabel;
 let answers, errorsWrap, errorXs, score1, score2, gameOverText;
+let celebracionOverlay, celebracionTitulo, celebracionEquipo, celebracionPuntos, btnCelebrarContinuar, btnCelebrarSalir;
+let gameOverFinalModal, gameOverFinalTitulo, gameOverFinalTexto, btnGameOverFinalSalir;
 
 function normalizarCompleto(texto) {
   return texto.toLowerCase()
@@ -78,6 +81,45 @@ function levenshteinDistance(a, b) {
     }
   }
   return matrix[b.length][a.length];
+}
+
+function actualizarTarjetaTurnoFijo() {
+  const miEquipo = sessionStorage.getItem("equipo") || "?";
+  const miNombre = jugadoresGlobal[miId]?.nombre || "Jugador";
+  const turnoActualData = turno;
+  
+  if (!currentTurnBadge) return;
+  
+  if (!turnoActualData || !turnoActualData.equipo) {
+    currentTurnBadge.innerHTML = `
+      <div style="margin-bottom: 8px;">🎮 EQUIPO ${miEquipo}</div>
+      <div style="margin-bottom: 8px;">👤 ${miNombre}</div>
+      <div style="color: #ffcc00;">⏳ Esperando turno...</div>
+    `;
+    currentTurnBadge.classList.remove("hidden");
+    return;
+  }
+
+  const esMiTurno = (turnoActualData.jugadorId === miId);
+  const textoJugadorTurno = esMiTurno ? "🎯 ¡ES TU TURNO!" : `🎮 Turno: Equipo ${turnoActualData.equipo}`;
+  const colorTurno = esMiTurno ? "#00ff80" : "#ffcc00";
+  
+  if (turnoActualData.jugadorId && jugadoresGlobal[turnoActualData.jugadorId]) {
+    const jugadorTurno = jugadoresGlobal[turnoActualData.jugadorId];
+    currentTurnBadge.innerHTML = `
+      <div style="margin-bottom: 8px;">🎮 EQUIPO ${miEquipo}</div>
+      <div style="margin-bottom: 8px;">👤 ${miNombre}</div>
+      <div style="color: ${colorTurno}; font-size: 11px;">🎯 Turno: ${jugadorTurno.nombre} (Eq. ${turnoActualData.equipo})</div>
+      <div style="color: ${colorTurno}; margin-top: 5px;">${textoJugadorTurno}</div>
+    `;
+  } else {
+    currentTurnBadge.innerHTML = `
+      <div style="margin-bottom: 8px;">🎮 EQUIPO ${miEquipo}</div>
+      <div style="margin-bottom: 8px;">👤 ${miNombre}</div>
+      <div style="color: ${colorTurno};">${textoJugadorTurno}</div>
+    `;
+  }
+  currentTurnBadge.classList.remove("hidden");
 }
 
 function actualizarJuegoDesdeEstado(data) {
@@ -220,22 +262,33 @@ function actualizarTurnoConNombre() {
   if (turno.jugadorId && jugadoresGlobal && jugadoresGlobal[turno.jugadorId]) {
     const jugador = jugadoresGlobal[turno.jugadorId];
     turnoTxt.innerHTML = `🎯 TURNO DE: ${jugador.nombre}<br><span style="font-size: 10px; color: #ffcc00;">(EQUIPO ${turno.equipo})</span>`;
-    if (currentTurnBadge && currentTurnPlayerName && faseActual === "jugando" && turno.jugadorId) {
-      currentTurnPlayerName.textContent = `${jugador.nombre.toUpperCase()} (EQUIPO ${jugador.equipo})`;
-      currentTurnBadge.classList.remove("hidden");
-    } else if (currentTurnBadge) currentTurnBadge.classList.add("hidden");
   } else {
     turnoTxt.innerHTML = `🎮 TURNO DEL EQUIPO ${turno.equipo}`;
-    if (currentTurnBadge) currentTurnBadge.classList.add("hidden");
   }
+  actualizarTarjetaTurnoFijo();
 }
 
 function actualizarLabelDinamico() {
   if (!inputLabel) return;
   inputLabel.classList.remove("bloqueado", "expulsado");
   
+  if (juegoTerminadoPermanente || estadoJuegoCache?.juegoTerminado === true) {
+    inputLabel.textContent = "🏆 JUEGO TERMINADO - Gracias por participar";
+    return;
+  }
+  
+  if (estadoJuegoCache?.mensajePresentador) {
+    inputLabel.textContent = `📢 ${estadoJuegoCache.mensajePresentador}`;
+    return;
+  }
+  
+  if (estadoJuegoCache?.mensajeFinalRonda) {
+    inputLabel.textContent = estadoJuegoCache.mensajeFinalRonda;
+    return;
+  }
+
   if (estadoJugador === "expulsado") {
-    inputLabel.textContent = "❌ EXPULSADO";
+    inputLabel.textContent = "❌ HAS SIDO EXPULSADO";
     inputLabel.classList.add("expulsado");
     return;
   }
@@ -249,18 +302,29 @@ function actualizarLabelDinamico() {
     return;
   }
   
-  const turnoEquipoNum = Number(turno.equipo);
-  const esMiTurnoDeEquipo = !turnoEquipoNum || turnoEquipoNum === miEquipoNum;
-  
-  if (esMiTurnoDeEquipo && !pausado && faseActual === "jugando") {
-    const jugador = jugadoresGlobal[miId];
-    inputLabel.textContent = jugador ? `👉 ${jugador.nombre}, es tu turno` : "👉 INTRODUCE TU RESPUESTA";
-  } else if (faseActual === "esperando") {
-    inputLabel.textContent = "⏳ Esperando que inicie el juego...";
+  if (faseActual === "jugando") {
+    const turnoEquipoNum = Number(turno.equipo);
+    const esMiTurnoDeEquipo = !turnoEquipoNum || turnoEquipoNum === miEquipoNum;
+    if (esMiTurnoDeEquipo && !pausado) {
+      const jugador = jugadoresGlobal[miId];
+      if (turno.jugadorId === miId) {
+        inputLabel.textContent = jugador ? `🎙️ ¡ES TU TURNO! Responde, ${jugador.nombre}` : "🎙️ ¡ES TU TURNO! Responde ahora";
+      } else if (esMiTurnoDeEquipo) {
+        inputLabel.textContent = `⏳ Turno de tu equipo, pero el presentador debe asignarte el turno a ti`;
+      } else {
+        inputLabel.textContent = `⏳ ESPERANDO - Turno del Equipo ${turnoEquipoNum}`;
+      }
+    } else {
+      inputLabel.textContent = `⏳ ESPERANDO - Turno del Equipo ${turnoEquipoNum}`;
+    }
   } else if (faseActual === "ronda") {
-    inputLabel.textContent = "🔄 Preparando siguiente ronda...";
+    inputLabel.textContent = "🔄 CAMBIANDO DE RONDA - Espera un momento...";
+  } else if (faseActual === "final") {
+    inputLabel.textContent = "🏁 RONDA TERMINADA - El presentador iniciará la siguiente";
+  } else if (faseActual === "esperando") {
+    inputLabel.textContent = "⏳ Esperando que el presentador inicie el juego...";
   } else if (pausado) {
-    inputLabel.textContent = "⏸️ JUEGO PAUSADO";
+    inputLabel.textContent = "⏸️ JUEGO PAUSADO - Espera instrucciones";
   } else {
     inputLabel.textContent = "👉 INTRODUCE TU RESPUESTA";
   }
@@ -269,6 +333,13 @@ function actualizarLabelDinamico() {
 function actualizarEstadoInputYBoton() {
   if (!inputRespuesta) return;
   inputRespuesta.classList.remove("turno-activo", "no-turno", "bloqueado");
+  
+  if (juegoTerminadoPermanente || estadoJuegoCache?.juegoTerminado === true) {
+    inputRespuesta.disabled = true;
+    inputRespuesta.placeholder = "🏆 JUEGO TERMINADO";
+    if (btnEnviar) btnEnviar.disabled = true;
+    return;
+  }
   
   if (estadoJugador === "expulsado") {
     inputRespuesta.disabled = true;
@@ -310,11 +381,18 @@ function actualizarEstadoInputYBoton() {
     if (!jugador) { inputRespuesta.disabled = true; if (btnEnviar) btnEnviar.disabled = true; return; }
     const miEquipoNum2 = Number(jugador.equipo);
     const turnoEquipoNum = Number(turno.equipo);
-    if (!turnoEquipoNum || turnoEquipoNum === miEquipoNum2) {
+    const esMiTurno = (turnoEquipoNum === miEquipoNum2 && turno.jugadorId === miId);
+    
+    if (esMiTurno) {
       inputRespuesta.disabled = false;
       inputRespuesta.classList.add("turno-activo");
-      inputRespuesta.placeholder = `⚡ Escribe tu respuesta - ${jugador.nombre}`;
+      inputRespuesta.placeholder = `⚡ ¡TU TURNO! Escribe tu respuesta - ${jugador.nombre}`;
       if (btnEnviar) btnEnviar.disabled = false;
+    } else if (turnoEquipoNum === miEquipoNum2) {
+      inputRespuesta.disabled = true;
+      inputRespuesta.classList.add("no-turno");
+      inputRespuesta.placeholder = `⏳ Turno de tu equipo, espera a que el presentador te asigne el turno`;
+      if (btnEnviar) btnEnviar.disabled = true;
     } else {
       inputRespuesta.disabled = true;
       inputRespuesta.classList.add("no-turno");
@@ -341,6 +419,136 @@ function iniciarRondaUI() {
   actualizarLabelDinamico();
 }
 
+function mostrarCelebracion(ganador, puntos, color) {
+  console.log("🎉 MOSTRANDO CELEBRACIÓN - Ganador:", ganador, "Puntos:", puntos);
+  
+  if (!celebracionOverlay) {
+    console.error("❌ celebracionOverlay no encontrado");
+    return;
+  }
+  
+  let textoGanador = "";
+  let emoji = "";
+  
+  if (ganador === 1) {
+    textoGanador = "EQUIPO VERDE";
+    emoji = "🟢";
+  } else if (ganador === 2) {
+    textoGanador = "EQUIPO AZUL";
+    emoji = "🔵";
+  } else {
+    textoGanador = "EMPATE";
+    emoji = "🤝";
+  }
+  
+  if (celebracionTitulo) celebracionTitulo.textContent = "🏆 ¡RONDA TERMINADA! 🏆";
+  if (celebracionEquipo) {
+    if (ganador === 0) {
+      celebracionEquipo.textContent = `${emoji} ¡${textoGanador}! ${emoji}`;
+      celebracionEquipo.style.color = "#ffcc00";
+    } else {
+      celebracionEquipo.textContent = `${emoji} ${textoGanador} GANA LA RONDA ${emoji}`;
+      celebracionEquipo.style.color = color;
+      celebracionEquipo.style.textShadow = `0 0 20px ${color}`;
+    }
+  }
+  if (celebracionPuntos) celebracionPuntos.textContent = `📊 Puntuación de la ronda: ${puntos} puntos`;
+  
+  celebracionOverlay.classList.remove("hidden");
+  if (gameWrapper) gameWrapper.classList.add("hidden");
+  
+  for (let i = 0; i < 100; i++) {
+    crearConfeti();
+  }
+}
+
+function ocultarCelebracion() {
+  if (celebracionOverlay) celebracionOverlay.classList.add("hidden");
+  if (gameWrapper && faseActual !== "final" && faseActual !== "ronda") gameWrapper.classList.remove("hidden");
+}
+
+function crearConfeti() {
+  const confeti = document.createElement("div");
+  confeti.className = "confeti";
+  const colores = ["#ff0040", "#00ff80", "#00ffff", "#ffcc00", "#ff6600", "#ff00ff"];
+  confeti.style.backgroundColor = colores[Math.floor(Math.random() * colores.length)];
+  confeti.style.left = Math.random() * 100 + "%";
+  confeti.style.width = Math.random() * 10 + 5 + "px";
+  confeti.style.height = Math.random() * 20 + 10 + "px";
+  confeti.style.animationDuration = Math.random() * 2 + 2 + "s";
+  confeti.style.animationDelay = Math.random() * 2 + "s";
+  document.body.appendChild(confeti);
+  
+  setTimeout(() => {
+    confeti.remove();
+  }, 4000);
+}
+
+function mostrarFinalJuego(scoresGlobal) {
+  const equipo1 = scoresGlobal?.[1] || 0;
+  const equipo2 = scoresGlobal?.[2] || 0;
+
+  let ganador = "";
+  let titulo = "";
+  
+  if (equipo1 > equipo2) {
+    ganador = "🏆 EQUIPO 1 (VERDE) GANA 🏆";
+    titulo = "🏆 EQUIPO VERDE GANA!";
+  } else if (equipo2 > equipo1) {
+    ganador = "🏆 EQUIPO 2 (AZUL) GANA 🏆";
+    titulo = "🏆 EQUIPO AZUL GANA!";
+  } else {
+    ganador = "🤝 ¡EMPATE! 🤝";
+    titulo = "🤝 EMPATE 🤝";
+  }
+
+  if (gameOverFinalTitulo) gameOverFinalTitulo.textContent = titulo;
+  if (gameOverFinalTexto) gameOverFinalTexto.innerHTML = `📊 Puntuación final:<br><br>🟢 Equipo 1: ${equipo1} puntos<br>🔵 Equipo 2: ${equipo2} puntos`;
+  
+  if (gameOverFinalModal) gameOverFinalModal.classList.remove("hidden");
+  
+  juegoTerminadoPermanente = true;
+  
+  if (inputRespuesta) inputRespuesta.disabled = true;
+  if (btnEnviar) btnEnviar.disabled = true;
+}
+
+async function limpiarJuegoCompleto() {
+  try {
+    console.log("🔄 Limpiando juego completo y volviendo al inicio...");
+    
+    if (gameOverFinalModal) gameOverFinalModal.classList.add("hidden");
+    
+    if (miId) {
+      await set(ref(db, "jugadores/" + miId), null);
+      miId = null;
+    }
+    
+    sessionStorage.removeItem("jugadorId");
+    sessionStorage.removeItem("equipo");
+    
+    if (gameWrapper) gameWrapper.classList.add("hidden");
+    if (startScreen) startScreen.classList.remove("hidden");
+    if (playerScreen) playerScreen.classList.add("hidden");
+    if (celebracionOverlay) celebracionOverlay.classList.add("hidden");
+    if (rondaAnuncioModal) rondaAnuncioModal.classList.add("hidden");
+    if (rondaTransicionScreen) rondaTransicionScreen.classList.add("hidden");
+    
+    juegoTerminadoPermanente = false;
+    faseActual = "esperando";
+    
+    if (inputRespuesta) {
+      inputRespuesta.value = "";
+      inputRespuesta.disabled = false;
+    }
+    
+    console.log("✅ Juego limpiado, usuario regresado al inicio");
+    
+  } catch (error) { 
+    console.error("❌ Error al limpiar juego:", error); 
+  }
+}
+
 window.registrarJugadorFirebase = function (jugador) {
   const jugadorRef = push(ref(db, "jugadores"));
   const jugadorId = jugadorRef.key;
@@ -353,6 +561,11 @@ function configurarListenerEstadoJugador() {
   if (!miId) return;
   if (window.estadoJugadorListener) window.estadoJugadorListener();
   window.estadoJugadorListener = onValue(ref(db, "jugadores/" + miId), (snap) => {
+    if (juegoTerminadoPermanente || estadoJuegoCache?.juegoTerminado === true) {
+      console.log("📢 Juego terminado, ignorando cambios de estado");
+      return;
+    }
+    
     if (!snap.exists()) {
       estadoJugador = "expulsado";
       if (expulsadoModal) expulsadoModal.classList.remove("hidden");
@@ -373,6 +586,7 @@ function configurarListenerEstadoJugador() {
     }
     actualizarEstadoInputYBoton();
     actualizarLabelDinamico();
+    actualizarTarjetaTurnoFijo();
   });
 }
 
@@ -397,6 +611,8 @@ function cambiarTurnoSiguienteJugador(equipo) {
 }
 
 async function marcarErrorFirebase() {
+  if (juegoTerminadoPermanente || estadoJuegoCache?.juegoTerminado === true) return;
+  
   const miEquipo = Number(jugadoresGlobal[miId]?.equipo);
   if (!miEquipo) return;
   const otroEquipo = miEquipo === 1 ? 2 : 1;
@@ -436,6 +652,10 @@ async function marcarErrorFirebase() {
 }
 
 async function verificarRespuesta() {
+  if (juegoTerminadoPermanente || estadoJuegoCache?.juegoTerminado === true) {
+    alert("🏆 El juego ya terminó. Gracias por participar.");
+    return;
+  }
   if (estadoJugador === "expulsado") { alert("❌ Estás expulsado"); return; }
   if (cooldown) return;
   if (pausado) { alert("⏸️ Juego pausado"); return; }
@@ -451,6 +671,7 @@ async function verificarRespuesta() {
   }
   
   if (turno.equipo && Number(turno.equipo) !== Number(miEquipo)) { alert("⏳ No es el turno de tu equipo"); return; }
+  if (turno.jugadorId && turno.jugadorId !== miId) { alert("⏳ No es tu turno, espera a que el presentador te seleccione"); return; }
   
   const textoOriginal = inputRespuesta.value.trim();
   if (!textoOriginal) { alert("✍️ Escribe una respuesta"); return; }
@@ -503,37 +724,6 @@ async function verificarRespuesta() {
   actualizarEstadoInputYBoton();
 }
 
-function mostrarGameOver() {
-  if (inputRespuesta) inputRespuesta.disabled = true;
-  if (btnEnviar) btnEnviar.disabled = true;
-  const ganador = scoresGlobal[1] > scoresGlobal[2] ? 1 : (scoresGlobal[2] > scoresGlobal[1] ? 2 : 0);
-  if (gameOverText) {
-    if (ganador === 0) gameOverText.innerHTML = `🤝 ¡EMPATE! 🤝<br><span>Puntos: ${scoresGlobal[1]} - ${scoresGlobal[2]}</span>`;
-    else gameOverText.innerHTML = `🏆 ¡GANADOR: EQUIPO ${ganador}! 🏆<br><span>Puntos: ${scoresGlobal[ganador]} - ${scoresGlobal[ganador === 1 ? 2 : 1]}</span>`;
-  }
-  if (gameWrapper) gameWrapper.classList.add("hidden");
-  if (gameOverScreen) gameOverScreen.classList.remove("hidden");
-  update(ref(db, "estadoJuego"), { fase: "final" });
-  setTimeout(() => { finalizarJuego(); }, 5000);
-}
-
-async function finalizarJuego() {
-  try {
-    const updates = {};
-    Object.keys(jugadoresGlobal).forEach(id => { updates[`jugadores/${id}`] = null; });
-    updates["estadoJuego"] = {
-      turno: { equipo: 1, jugadorId: null }, pausado: false, respuestasReveladas: {},
-      scores: { 1: 0, 2: 0 }, scoresGlobal: { 1: 0, 2: 0 }, errores: { 1: 0, 2: 0 },
-      fase: "esperando", preguntaActual: "", respuestasActuales: [], reset: Date.now()
-    };
-    await update(ref(db), updates);
-    sessionStorage.removeItem("jugadorId"); sessionStorage.removeItem("equipo");
-    limpiarReclamoTab();
-    if (gameOverScreen) gameOverScreen.classList.add("hidden");
-    if (startScreen) startScreen.classList.remove("hidden");
-  } catch (error) { console.error("❌ Error al finalizar juego:", error); }
-}
-
 window.addEventListener("DOMContentLoaded", () => {
   startScreen = document.getElementById("startScreen");
   playerScreen = document.getElementById("playerScreen");
@@ -542,6 +732,20 @@ window.addEventListener("DOMContentLoaded", () => {
   expulsadoModal = document.getElementById("expulsadoModal");
   rondaTransicionScreen = document.getElementById("rondaTransicionScreen");
   gameWrapper = document.querySelector(".game-wrapper");
+  rondaAnuncioModal = document.getElementById("rondaAnuncioModal");
+  rondaAnuncioTexto = document.getElementById("rondaAnuncioTexto");
+  btnCerrarAnuncioRonda = document.getElementById("btnCerrarAnuncioRonda");
+  celebracionOverlay = document.getElementById("celebracionOverlay");
+  celebracionTitulo = document.getElementById("celebracionTitulo");
+  celebracionEquipo = document.getElementById("celebracionEquipo");
+  celebracionPuntos = document.getElementById("celebracionPuntos");
+  btnCelebrarContinuar = document.getElementById("btnCelebrarContinuar");
+  btnCelebrarSalir = document.getElementById("btnCelebrarSalir");
+  gameOverFinalModal = document.getElementById("gameOverFinalModal");
+  gameOverFinalTitulo = document.getElementById("gameOverFinalTitulo");
+  gameOverFinalTexto = document.getElementById("gameOverFinalTexto");
+  btnGameOverFinalSalir = document.getElementById("btnGameOverFinalSalir");
+  
   btnStart = document.getElementById("btnStart");
   btnJoin = document.getElementById("btnJoin");
   btnEnviar = document.getElementById("btnEnviar");
@@ -559,6 +763,35 @@ window.addEventListener("DOMContentLoaded", () => {
   score1 = document.getElementById("score1");
   score2 = document.getElementById("score2");
   gameOverText = document.getElementById("gameOverText");
+  
+  // Botón salir del modal final
+  if (btnGameOverFinalSalir) {
+    btnGameOverFinalSalir.addEventListener("click", async () => {
+      console.log("🚪 Jugador saliendo del juego...");
+      await limpiarJuegoCompleto();
+    });
+  }
+  
+  if (btnCelebrarContinuar) {
+    btnCelebrarContinuar.addEventListener("click", () => {
+      ocultarCelebracion();
+    });
+  }
+  
+  if (btnCelebrarSalir) {
+    btnCelebrarSalir.addEventListener("click", async () => {
+      ocultarCelebracion();
+      await limpiarJuegoCompleto();
+    });
+  }
+  
+  if (btnCerrarAnuncioRonda) {
+    btnCerrarAnuncioRonda.addEventListener("click", () => {
+      if (rondaAnuncioModal) rondaAnuncioModal.classList.add("hidden");
+      if (gameWrapper && faseActual !== "final") gameWrapper.classList.remove("hidden");
+    });
+  }
+  
   if (errorsWrap) {
     if (!errorXs || errorXs.length === 0) errorsWrap.innerHTML = "<span>X</span><span>X</span><span>X</span>";
     errorsWrap.querySelectorAll("span").forEach(s => { if (!s.textContent.trim()) s.textContent = "X"; });
@@ -570,6 +803,7 @@ window.addEventListener("DOMContentLoaded", () => {
     actualizarTurnoConNombre();
     actualizarEstadoInputYBoton();
     actualizarLabelDinamico();
+    actualizarTarjetaTurnoFijo();
   });
   
   onValue(ref(db, "estadoJuego"), (snapshot) => {
@@ -584,7 +818,15 @@ window.addEventListener("DOMContentLoaded", () => {
       return;
     }
     const e = snapshot.val();
+    const cambioPrevio = estadoJuegoCache;
     estadoJuegoCache = e;
+    
+    // DETECTAR JUEGO TERMINADO
+    if (e.juegoTerminado === true && !juegoTerminadoPermanente) {
+      console.log("🏆 JUEGO TERMINADO DETECTADO");
+      mostrarFinalJuego(e.scoresGlobal);
+      return;
+    }
     
     actualizarJuegoDesdeEstado(e);
     if (e.turno !== undefined) turno = typeof e.turno === 'object' ? { ...e.turno, equipo: Number(e.turno.equipo) } : { equipo: Number(e.turno) || 1, jugadorId: null };
@@ -599,21 +841,52 @@ window.addEventListener("DOMContentLoaded", () => {
       iniciarRondaUI();
       return;
     }
+    
+    if (e.celebracionRonda && e.celebracionRonda.activo && (!cambioPrevio || !cambioPrevio.celebracionRonda || cambioPrevio.celebracionRonda.activo !== e.celebracionRonda.activo)) {
+      console.log("🎉 Mostrando celebración de ronda:", e.celebracionRonda);
+      mostrarCelebracion(
+        e.celebracionRonda.ganador,
+        e.celebracionRonda.puntos,
+        e.celebracionRonda.color
+      );
+    }
+    
+    if (e.mensajeFinalRonda && e.mensajeFinalRonda !== cambioPrevio?.mensajeFinalRonda) {
+      console.log("📢 Mensaje de fin de ronda:", e.mensajeFinalRonda);
+      if (rondaAnuncioTexto) rondaAnuncioTexto.textContent = e.mensajeFinalRonda;
+      if (rondaAnuncioModal) {
+        rondaAnuncioModal.classList.remove("hidden");
+        if (gameWrapper) gameWrapper.classList.add("hidden");
+        setTimeout(() => {
+          if (rondaAnuncioModal) rondaAnuncioModal.classList.add("hidden");
+          if (gameWrapper && faseActual !== "final" && faseActual !== "ronda") gameWrapper.classList.remove("hidden");
+        }, 4000);
+      }
+    }
+    
     if (e.fase !== undefined) {
+      const faseAnterior = faseActual;
       faseActual = e.fase;
       actualizarEstadoInputYBoton();
-      if (faseActual === "ronda") {
+      
+      if (faseActual === "ronda" && faseAnterior !== "ronda") {
         if (gameWrapper) gameWrapper.classList.add("hidden");
         if (rondaTransicionScreen) rondaTransicionScreen.classList.remove("hidden");
         setTimeout(() => {
           if (rondaTransicionScreen) rondaTransicionScreen.classList.add("hidden");
-          if (gameWrapper) gameWrapper.classList.remove("hidden");
+          if (gameWrapper && faseActual !== "final") gameWrapper.classList.remove("hidden");
         }, 3000);
-      } else if (faseActual === "final") mostrarGameOver();
+      } else if (faseActual === "final" && !e.juegoTerminado) {
+        // mostrarGameOver();
+      }
     }
+    
     if (e.pausado !== undefined) pausado = !!e.pausado;
     if (e.scores) scores = e.scores;
-    if (e.scoresGlobal) { scoresGlobal = e.scoresGlobal; if (globalScoreEl) globalScoreEl.textContent = `🌍 GLOBAL: ${scoresGlobal[1] ?? 0} - ${scoresGlobal[2] ?? 0}`; }
+    if (e.scoresGlobal) { 
+      scoresGlobal = e.scoresGlobal; 
+      if (globalScoreEl) globalScoreEl.textContent = `🌍 GLOBAL: ${scoresGlobal[1] ?? 0} - ${scoresGlobal[2] ?? 0}`; 
+    }
     if (e.errores) { 
       erroresPorEquipo = e.errores; 
       const miEquipoLocal = Number(jugadoresGlobal[miId]?.equipo); 
@@ -625,7 +898,7 @@ window.addEventListener("DOMContentLoaded", () => {
       respuestasMostradas = [];
       if (answers) answers.forEach((a, idx) => { if (e.respuestasReveladas[idx]) { a.classList.add("revealed"); respuestasMostradas.push(idx); } else a.classList.remove("revealed"); });
     }
-    actualizarTurnoConNombre(); actualizarScoresUI(); actualizarEstadoInputYBoton(); actualizarLabelDinamico();
+    actualizarTurnoConNombre(); actualizarScoresUI(); actualizarEstadoInputYBoton(); actualizarLabelDinamico(); actualizarTarjetaTurnoFijo();
   });
   
   tabInstanceId = generarTabInstanceId();
@@ -645,15 +918,27 @@ window.addEventListener("DOMContentLoaded", () => {
   }
   
   btnStart?.addEventListener("click", () => { if (startScreen) startScreen.classList.add("hidden"); if (playerScreen) playerScreen.classList.remove("hidden"); });
+  
   btnJoin?.addEventListener("click", async () => {
     const nombre = document.getElementById("playerName").value.trim();
     const equipo = Number(document.getElementById("playerTeam").value);
-    if (!nombre) return alert("✍️ Escribe tu nombre");
+    
+    if (!nombre) {
+      alert("⚠️ Por favor, escribe tu nombre para poder jugar.");
+      return;
+    }
+    
+    if (nombre.length < 3) {
+      alert("⚠️ Tu nombre debe tener al menos 3 caracteres.");
+      return;
+    }
+    
     const snapshot = await get(ref(db, "jugadores"));
     const jugadores = snapshot.val() || {};
     const jugadoresActivos = Object.values(jugadores).filter(j => j.estado !== "expulsado");
     if (equipo === 1 && jugadoresActivos.filter(j => Number(j.equipo) === 1).length >= 3) return alert("🚫 Equipo 1 está lleno (máximo 3 jugadores)");
     if (equipo === 2 && jugadoresActivos.filter(j => Number(j.equipo) === 2).length >= 3) return alert("🚫 Equipo 2 está lleno (máximo 3 jugadores)");
+    
     const jugadorId = window.registrarJugadorFirebase({ nombre, equipo, fecha: Date.now() });
     miId = jugadorId;
     sessionStorage.setItem("jugadorId", jugadorId);
@@ -663,8 +948,15 @@ window.addEventListener("DOMContentLoaded", () => {
     if (playerScreen) playerScreen.classList.add("hidden");
     if (gameWrapper) gameWrapper.classList.remove("hidden");
     iniciarRondaUI();
+    actualizarTarjetaTurnoFijo();
   });
-  btnNext?.addEventListener("click", () => { if (gameOverScreen) gameOverScreen.classList.add("hidden"); if (gameWrapper) gameWrapper.classList.remove("hidden"); iniciarRondaUI(); });
+  
+  btnNext?.addEventListener("click", () => { 
+    if (gameOverScreen) gameOverScreen.classList.add("hidden"); 
+    if (gameWrapper) gameWrapper.classList.remove("hidden"); 
+    iniciarRondaUI(); 
+  });
+  
   btnRegresarInicio?.addEventListener("click", async () => {
     try {
       if (window.estadoJugadorListener) { window.estadoJugadorListener(); window.estadoJugadorListener = null; }
@@ -676,8 +968,12 @@ window.addEventListener("DOMContentLoaded", () => {
       limpiarReclamoTab();
       miId = null; estadoJugador = "activo"; turno = { equipo: 1, jugadorId: null }; faseActual = "esperando";
       if (inputRespuesta) { inputRespuesta.value = ""; inputRespuesta.disabled = false; }
+      if (celebracionOverlay) celebracionOverlay.classList.add("hidden");
+      if (rondaAnuncioModal) rondaAnuncioModal.classList.add("hidden");
+      juegoTerminadoPermanente = false;
     } catch (error) { console.error("❌ Error al regresar al inicio:", error); }
   });
+  
   btnEnviar?.addEventListener("click", verificarRespuesta);
   inputRespuesta?.addEventListener("keydown", e => { if (e.key === "Enter") verificarRespuesta(); });
   

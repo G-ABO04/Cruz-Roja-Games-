@@ -144,6 +144,16 @@
         <div><h3 class="editor-label">Estado del juego:</h3><div style="display: flex; gap: 10px; flex-wrap: wrap;"><button id="btnIniciarJuego" class="btn-presentador verde">▶️ INICIAR JUEGO</button><button id="btnPausarJuego" class="btn-presentador amarillo">⏸️ PAUSAR</button><button id="btnReanudarJuego" class="btn-presentador verde">▶️ REANUDAR</button><button id="btnReiniciarTodo" class="btn-presentador rojo">⚠️ REINICIAR TODO</button></div></div>
       </section>
 
+      <!-- Área para enviar mensajes a jugadores -->
+      <section class="panel">
+        <h2 class="panel-titulo">📢 MENSAJE PARA JUGADORES</h2>
+        <div class="editor-pregunta">
+          <input type="text" id="mensajePresentadorInput" class="editor-input" placeholder="Ej: ¡Última oportunidad para responder!" autocomplete="off">
+          <button id="btnEnviarMensaje" class="btn-presentador azul">📢 ENVIAR MENSAJE</button>
+          <button id="btnLimpiarMensaje" class="btn-presentador gris">🗑️ LIMPIAR MENSAJE</button>
+        </div>
+      </section>
+
       <section class="panel panel-pregunta">
         <h2 class="panel-titulo">🎯 PREGUNTA ACTIVA</h2>
         <div class="pregunta-actual"><div class="pregunta-display"><span class="estado-label">Pregunta:</span><p id="pregunta" class="pregunta-texto">—</p></div><h3 class="editor-label">Respuestas en tiempo real:</h3><div class="respuestas-grid" id="respuestas"></div></div>
@@ -157,6 +167,22 @@
     </main>
 
     <footer class="footer-presentador">CRUZ ROJA MEXICANA - CIUDAD DE PUEBLA | MODO PRESENTADOR v3.0 | © 2025</footer>
+  </div>
+
+  <!-- MODAL DE ADVERTENCIA PARA CAMBIAR PREGUNTA (SOLO PRESENTADOR) -->
+  <div id="advertenciaPreguntaModal" class="modal-advertencia hidden">
+    <div class="modal-advertencia-content">
+      <div class="modal-advertencia-icon">⚠️</div>
+      <h2>¡RECUERDA CAMBIAR LA PREGUNTA!</h2>
+      <p>Antes de iniciar una nueva ronda, debes:</p>
+      <ul>
+        <li>📝 Escribir una NUEVA pregunta</li>
+        <li>📋 Completar las 5 respuestas</li>
+        <li>🚀 Hacer clic en "ENVIAR PREGUNTA"</li>
+      </ul>
+      <p class="modal-advertencia-destacado">¡No uses la misma pregunta de la ronda anterior!</p>
+      <button id="btnCerrarAdvertencia" class="btn-presentador verde">✅ ENTENDIDO</button>
+    </div>
   </div>
 
   <script type="module" src="presentador.js"></script>

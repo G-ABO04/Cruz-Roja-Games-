@@ -16,8 +16,8 @@
   <img src="assets/img/2.png" class="side-character right-character" alt="Equipo 2">
 
   <div id="currentTurnBadge" class="current-turn-badge hidden">
-    <div id="teamInfo">Turn: Team 1 | You are: Team 1</div>
-    <div id="currentPlayerInfo">🎮 Current player: <strong id="currentTurnPlayerName">waiting...</strong></div>
+    <div id="teamInfo">Turno: Equipo 1</div>
+    <div id="currentPlayerInfo">🎮 Turno actual: <strong id="currentTurnPlayerName">esperando...</strong></div>
   </div>
 
   <!-- Pantalla de inicio -->
@@ -31,16 +31,17 @@
     </div>
   </section>
 
-  <!-- Pantalla de registro -->
+  <!-- Pantalla de registro MEJORADA -->
   <section id="playerScreen" class="overlay hidden">
     <div class="card">
-      <h1>REGISTRARSE</h1>
+      <h1>🎮 INGRESA AL JUEGO</h1>
+      <p style="font-size: 12px; margin-bottom: 20px;">Escribe tu nombre y elige tu equipo</p>
       <input id="playerName" placeholder="Tu nombre">
       <select id="playerTeam">
-        <option value="1">Equipo 1</option>
-        <option value="2">Equipo 2</option>
+        <option value="1">Equipo 1 (Verde)</option>
+        <option value="2">Equipo 2 (Azul)</option>
       </select>
-      <button id="btnJoin">ENTRAR</button>
+      <button id="btnJoin">ENTRAR AL JUEGO</button>
     </div>
   </section>
 
@@ -53,7 +54,7 @@
     </div>
   </section>
 
-  <!-- Modal de bloqueado - CON CLASE MODAL -->
+  <!-- Modal de bloqueado -->
   <div id="blockedModal" class="overlay modal hidden">
     <div class="card">
       <h2>🚫 ESTÁS BLOQUEADO</h2>
@@ -71,7 +72,17 @@
       <button id="btnRegresarInicio">REGRESAR AL INICIO</button>
     </div>
   </div>
-  <!-- NUEVO: Pantalla de transición de ronda -->
+
+  <!-- Modal de anuncio de ronda -->
+  <div id="rondaAnuncioModal" class="overlay modal hidden">
+    <div class="card">
+      <h2 id="rondaAnuncioTitulo">🏆 RONDA TERMINADA</h2>
+      <p id="rondaAnuncioTexto"></p>
+      <button id="btnCerrarAnuncioRonda">ENTENDIDO</button>
+    </div>
+  </div>
+
+  <!-- Pantalla de transición de ronda -->
   <section id="rondaTransicionScreen" class="overlay hidden">
     <div class="card">
       <h1>🎯 SIGUIENTE RONDA</h1>
@@ -79,6 +90,7 @@
       <div class="loading-spinner"></div>
     </div>
   </section>
+
   <!-- Contenedor principal del juego -->
   <div class="game-wrapper hidden">
     <header class="top">
@@ -97,7 +109,7 @@
         <span id="score2">0</span>
       </div>
 
-      <!-- GLOBAL SCORE INTEGRADO DENTRO DEL MISMO BLOQUE -->
+      <!-- GLOBAL SCORE INTEGRADO -->
       <div id="globalScoreContainer">
         <p id="globalScore">🌍 GLOBAL: 0 - 0</p>
       </div>
@@ -138,6 +150,28 @@
     <footer>
       <p>CRUZ ROJA MEXICANA</p>
     </footer>
+  </div>
+
+  <!-- OVERLAY DE CELEBRACIÓN PARA FIN DE RONDA (JUGADORES) -->
+  <div id="celebracionOverlay" class="celebracion-overlay hidden">
+    <div class="celebracion-content">
+      <h1 id="celebracionTitulo" class="celebracion-titulo">🏆 ¡RONDA TERMINADA! 🏆</h1>
+      <div id="celebracionEquipo" class="celebracion-equipo">🏆 EQUIPO GANADOR 🏆</div>
+      <p id="celebracionPuntos" class="celebracion-puntos"></p>
+      <div class="celebracion-botones">
+        <button id="btnCelebrarContinuar" class="btn-celebrar-continuar">🎮 CONTINUAR</button>
+        <button id="btnCelebrarSalir" class="btn-celebrar-salir">🚪 SALIR AL INICIO</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME OVER FINAL MODAL - Pantalla cuando el presentador termina el juego -->
+  <div id="gameOverFinalModal" class="overlay modal hidden">
+    <div class="card">
+      <h2 id="gameOverFinalTitulo">🏆 JUEGO TERMINADO 🏆</h2>
+      <p id="gameOverFinalTexto"></p>
+      <button id="btnGameOverFinalSalir">🚪 SALIR DEL JUEGO</button>
+    </div>
   </div>
 
   <script type="module" src="script.js"></script>
