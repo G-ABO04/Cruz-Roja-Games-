@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>100 Mexicanos – Riesgos Volcánicos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Personajes laterales - SOLO VISIBLE EN ESCRITORIO -->
+  <img src="assets/img/1.png" class="side-character left-character" alt="Equipo 1">
+  <img src="assets/img/2.png" class="side-character right-character" alt="Equipo 2">
+
+  <div id="currentTurnBadge" class="current-turn-badge hidden">
+    <div id="teamInfo">Turn: Team 1 | You are: Team 1</div>
+    <div id="currentPlayerInfo">🎮 Current player: <strong id="currentTurnPlayerName">waiting...</strong></div>
+  </div>
+
+  <!-- Pantalla de inicio -->
+  <section id="startScreen" class="overlay">
+    <div class="card">
+      <img src="assets/img/cruz-roja.png" class="logo-start" alt="Cruz Roja">
+      <h1>100 MEXICANOS</h1>
+      <h2>DIJERON</h2>
+      <p class="subtitle">RIESGOS VOLCÁNICOS</p>
+      <button id="btnStart">PRESIONA START</button>
+    </div>
+  </section>
+
+  <!-- Pantalla de registro -->
+  <section id="playerScreen" class="overlay hidden">
+    <div class="card">
+      <h1>REGISTRARSE</h1>
+      <input id="playerName" placeholder="Tu nombre">
+      <select id="playerTeam">
+        <option value="1">Equipo 1</option>
+        <option value="2">Equipo 2</option>
+      </select>
+      <button id="btnJoin">ENTRAR</button>
+    </div>
+  </section>
+
+  <!-- Pantalla de Game Over -->
+  <section id="gameOverScreen" class="overlay hidden">
+    <div class="card">
+      <h1>GAME OVER</h1>
+      <p id="gameOverText"></p>
+      <button id="btnNext">CONTINUAR</button>
+    </div>
+  </section>
+
+  <!-- Modal de bloqueado - CON CLASE MODAL -->
+  <div id="blockedModal" class="overlay modal hidden">
+    <div class="card">
+      <h2>🚫 ESTÁS BLOQUEADO</h2>
+      <p>Has sido bloqueado por el presentador</p>
+      <p class="small">Espera instrucciones</p>
+    </div>
+  </div>
+
+  <!-- Modal de expulsado -->
+  <div id="expulsadoModal" class="overlay modal hidden">
+    <div class="card">
+      <h2>❌ HAS SIDO EXPULSADO</h2>
+      <p>No puedes seguir participando</p>
+      <p class="small">Contacta al presentador</p>
+      <button id="btnRegresarInicio">REGRESAR AL INICIO</button>
+    </div>
+  </div>
+  <!-- NUEVO: Pantalla de transición de ronda -->
+  <section id="rondaTransicionScreen" class="overlay hidden">
+    <div class="card">
+      <h1>🎯 SIGUIENTE RONDA</h1>
+      <p id="transicionTexto">Preparando la siguiente ronda...</p>
+      <div class="loading-spinner"></div>
+    </div>
+  </section>
+  <!-- Contenedor principal del juego -->
+  <div class="game-wrapper hidden">
+    <header class="top">
+      <h1>100 MEXICANOS</h1>
+      <p>RIESGOS VOLCÁNICOS</p>
+    </header>
+
+    <!-- Marcadores CON GLOBAL SCORE DENTRO -->
+    <section class="scores">
+      <div class="team">
+        <h2>EQUIPO 1</h2>
+        <span id="score1">0</span>
+      </div>
+      <div class="team">
+        <h2>EQUIPO 2</h2>
+        <span id="score2">0</span>
+      </div>
+
+      <!-- GLOBAL SCORE INTEGRADO DENTRO DEL MISMO BLOQUE -->
+      <div id="globalScoreContainer">
+        <p id="globalScore">🌍 GLOBAL: 0 - 0</p>
+      </div>
+    </section>
+
+    <!-- Área de juego -->
+    <section class="game">
+      <h3 id="questionText"></h3>
+
+      <div class="answers">
+        <div class="answer" data-index="0"></div>
+        <div class="answer" data-index="1"></div>
+        <div class="answer" data-index="2"></div>
+        <div class="answer" data-index="3"></div>
+        <div class="answer" data-index="4"></div>
+      </div>
+
+      <!-- X de errores -->
+      <div class="errors">
+        <span>X</span>
+        <span>X</span>
+        <span>X</span>
+      </div>
+    </section>
+
+    <!-- Área de entrada con label dinámico -->
+    <section class="input-area">
+      <p id="turno">TURNO DEL EQUIPO 1</p>
+      <p class="input-label" id="inputLabel">👉 INTRODUCE TU RESPUESTA</p>
+      <input id="respuesta" placeholder="Escribe tu respuesta..." autocomplete="off">
+      <button id="btnEnviar">GO!</button>
+    </section>
+
+    <!-- Emblema -->
+    <img src="assets/img/cruz-roja.png" class="emblema" alt="Cruz Roja">
+
+    <!-- Footer -->
+    <footer>
+      <p>CRUZ ROJA MEXICANA</p>
+    </footer>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+
+</html>

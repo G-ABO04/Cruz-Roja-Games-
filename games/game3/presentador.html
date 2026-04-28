@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presentador - 100 Mexicanos | Cruz Roja</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="presentador.css">
+</head>
+<body class="presentador">
+
+  <div id="presentadorStartScreen" class="overlay-presentador retro-start">
+    <div class="card-presentador retro-card">
+      <div class="retro-scanlines"></div>
+      <div class="logo-container-start retro-logo">
+        <img src="assets/img/cruz-roja.png" alt="Cruz Roja" class="logo-presentador-start retro-img">
+        <div class="logo-text-start retro-text">
+          <span class="cruz-roja-text retro-cruz">CRUZ ROJA</span>
+          <span class="mexicana-text retro-mex">MEXICANA</span>
+          <span class="ciudad-text retro-ciudad">CIUDAD DE PUEBLA</span>
+        </div>
+      </div>
+      <div class="retro-title-container">
+        <h1 class="retro-title-main">100 MEXICANOS</h1>
+        <h2 class="retro-subtitle">DIJERON</h2>
+        <div class="retro-divider"></div>
+        <p class="retro-theme">⚡ RIESGOS VOLCÁNICOS ⚡</p>
+      </div>
+      <div class="retro-badge">
+        <span class="retro-badge-icon">🎮</span>
+        <span class="retro-badge-text">MODO PRESENTADOR</span>
+        <span class="retro-badge-icon">🎮</span>
+      </div>
+      <button id="btnIniciarPresentador" class="retro-start-btn">
+        <span class="retro-btn-text">▶ PRESIONA START ◀</span>
+        <span class="retro-btn-glow"></span>
+      </button>
+      <div class="retro-info">
+        <div class="retro-info-item">⚡ CONTROL TOTAL DEL JUEGO</div>
+        <div class="retro-info-item">👥 GESTIÓN DE JUGADORES</div>
+        <div class="retro-info-item">🔓 REVELA RESPUESTAS</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="presentadorMainContent" class="presentador-main-content hidden">
+    <header class="header-presentador">
+      <div class="logo-header">
+        <img src="assets/img/cruz-roja.png" alt="Cruz Roja" class="logo-presentador">
+        <div class="logo-text-header">
+          <span>CRUZ ROJA MEXICANA</span>
+          <span>CIUDAD DE PUEBLA</span>
+        </div>
+      </div>
+      <h1 class="titulo-presentador">100 MEXICANOS DIJERON</h1>
+      <h2 class="subtitulo-presentador">🎮 PANEL DEL PRESENTADOR - RIESGOS VOLCÁNICOS</h2>
+    </header>
+
+    <main class="contenedor-presentador">
+      <section class="panel panel-estado">
+        <h2 class="panel-titulo">⚡ ESTADO DEL JUEGO</h2>
+        <div class="estado-juego">
+          <div class="estado-item"><div class="estado-titulo">FASE ACTUAL</div><div class="estado-valor" id="faseActual">ESPERANDO</div></div>
+          <div class="estado-item" id="turnoActual"><div class="estado-titulo">TURNO ACTUAL</div><div class="estado-valor" id="turnoActualTxt">EQUIPO 1</div></div>
+          <div class="estado-item"><div class="estado-titulo">PUNTUACIONES</div><div class="estado-valor" id="scores">Equipo 1: 0<br>Equipo 2: 0</div></div>
+          <div class="estado-item"><div class="estado-titulo">PUNTUACIÓN GLOBAL</div><div class="estado-valor" id="scoresGlobal">🌍 GLOBAL: 0 - 0</div></div>
+          <div class="estado-item"><div class="estado-titulo">ERRORES</div><div class="estado-valor" id="errores">Equipo 1: 0/3<br>Equipo 2: 0/3</div></div>
+          <div class="estado-item"><div class="estado-titulo">JUGADORES CONECTADOS</div><div class="lista-jugadores" id="jugadoresConectados"><div class="sin-jugadores">👾 ESPERANDO JUGADORES...</div></div><div class="estadisticas-jugadores"><p id="contadorJugadores">Total: 0/6 jugadores</p></div></div>
+        </div>
+      </section>
+
+      <section class="panel panel-turno-detallado">
+        <h2 class="panel-titulo">🎯 TURNO ACTUAL DETALLADO</h2>
+        <div id="turnoDetallado" class="turno-detallado"><div class="sin-jugadores">👾 ESPERANDO TURNO...</div></div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-titulo">📚 GESTIÓN DE PREGUNTAS</h2>
+        <div class="gestion-preguntas">
+          <div class="lista-preguntas">
+            <h3 class="editor-label">Preguntas guardadas:</h3>
+            <select id="questionsList" class="editor-input" size="5"><option value="">Cargando preguntas...</option></select>
+          </div>
+          <div class="botones-gestion">
+            <button id="btnNuevaPregunta" class="btn-presentador azul">➕ NUEVA PREGUNTA</button>
+            <button id="btnEditarPregunta" class="btn-presentador amarillo">✏️ EDITAR</button>
+            <button id="btnEliminarPregunta" class="btn-presentador rojo">🗑️ ELIMINAR</button>
+            <button id="btnGuardarPregunta" class="btn-presentador verde">💾 GUARDAR PREGUNTA</button>
+            <button id="btnCancelarEdicion" class="btn-presentador gris hidden">❌ CANCELAR</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-titulo">📝 EDITOR DE PREGUNTA</h2>
+        <div class="editor-pregunta">
+          <label class="editor-label">Pregunta:</label>
+          <input type="text" id="preguntaInput" class="editor-input" placeholder="Ej: ¿Qué hacer ANTES de una erupción volcánica?" autocomplete="off">
+          <label class="editor-label">Respuestas y palabras clave:</label>
+          <div id="respuestasContainer">
+            <div class="respuesta-item"><input class="respuestaInput" placeholder="Respuesta 1 (50 pts)" autocomplete="off"><input class="clavesInput" placeholder="Palabras clave (separadas por coma) ej: mochila, emergencia, preparar" autocomplete="off"></div>
+            <div class="respuesta-item"><input class="respuestaInput" placeholder="Respuesta 2 (35 pts)" autocomplete="off"><input class="clavesInput" placeholder="Palabras clave (separadas por coma)" autocomplete="off"></div>
+            <div class="respuesta-item"><input class="respuestaInput" placeholder="Respuesta 3 (25 pts)" autocomplete="off"><input class="clavesInput" placeholder="Palabras clave (separadas por coma)" autocomplete="off"></div>
+            <div class="respuesta-item"><input class="respuestaInput" placeholder="Respuesta 4 (15 pts)" autocomplete="off"><input class="clavesInput" placeholder="Palabras clave (separadas por coma)" autocomplete="off"></div>
+            <div class="respuesta-item"><input class="respuestaInput" placeholder="Respuesta 5 (5 pts)" autocomplete="off"><input class="clavesInput" placeholder="Palabras clave (separadas por coma)" autocomplete="off"></div>
+          </div>
+          <button id="btnEnviarPregunta" class="btn-presentador verde">🚀 ENVIAR PREGUNTA</button>
+          <button id="btnIniciarJuego" class="btn-presentador verde">▶️ INICIAR JUEGO</button>
+        </div>
+      </section>
+
+      <section class="panel panel-controles">
+        <h2 class="panel-titulo">🎮 CONTROLES DEL JUEGO</h2>
+        <div class="control-turno">
+          <h3 class="editor-label">Control de Turno:</h3>
+          <div class="turno-buttons"><button id="btnTurnoEquipo1" class="btn-turno equipo1-btn">🎯 EQUIPO 1</button><button id="btnTurnoEquipo2" class="btn-turno equipo2-btn">🎯 EQUIPO 2</button></div>
+          <div id="turnoDisplay" class="turno-display">EQUIPO 1</div>
+        </div>
+        <div class="control-respuestas">
+          <h3 class="editor-label">Revelar Respuestas:</h3>
+          <div id="respuestasRevelar" class="respuestas-revelar-grid">
+            <button class="btn-revelar" data-index="0">🔓 Respuesta 1</button>
+            <button class="btn-revelar" data-index="1">🔓 Respuesta 2</button>
+            <button class="btn-revelar" data-index="2">🔓 Respuesta 3</button>
+            <button class="btn-revelar" data-index="3">🔓 Respuesta 4</button>
+            <button class="btn-revelar" data-index="4">🔓 Respuesta 5</button>
+          </div>
+        </div>
+        <div class="control-puntos">
+          <h3 class="editor-label">Sumar Puntos Manual:</h3>
+          <div class="puntos-buttons"><button id="btnPuntosEquipo1" class="btn-puntos">➕ EQUIPO 1 +50</button><button id="btnPuntosEquipo2" class="btn-puntos">➕ EQUIPO 2 +50</button></div>
+        </div>
+        <div class="selector-rondas"><select id="selectRonda" class="editor-input"><option value="0">Ronda 1: Preparación</option><option value="1">Ronda 2: Durante erupción</option><option value="2">Ronda 3: Después de erupción</option></select><button id="btnCargarRonda" class="btn-presentador verde">CARGAR RONDA</button></div>
+        <div class="controles-grid">
+          <button id="btnNuevaRonda" class="btn-presentador rojo">🔄 NUEVA RONDA</button>
+          <button id="btnTerminarRonda" class="btn-presentador naranja">🏁 TERMINAR RONDA</button>
+          <button id="btnJuegoTerminado" class="btn-presentador rojo">🏆 JUEGO TERMINADO</button>
+          <button id="btnCambiarTurno" class="btn-presentador amarillo">🔄 CAMBIAR TURNO</button>
+          <button id="btnResetRespuestas" class="btn-presentador">🔓 RESET RESPUESTAS</button>
+          <button id="btnResetScores" class="btn-presentador">💰 RESET PUNTOS RONDA</button>
+          <button id="btnResetGlobalScores" class="btn-presentador azul">🌍 RESET PUNTOS GLOBALES</button>
+          <button id="btnResetErrores" class="btn-presentador amarillo">🔄 RESET ERRORES</button>
+        </div>
+        <div><h3 class="editor-label">Estado del juego:</h3><div style="display: flex; gap: 10px; flex-wrap: wrap;"><button id="btnIniciarJuego" class="btn-presentador verde">▶️ INICIAR JUEGO</button><button id="btnPausarJuego" class="btn-presentador amarillo">⏸️ PAUSAR</button><button id="btnReanudarJuego" class="btn-presentador verde">▶️ REANUDAR</button><button id="btnReiniciarTodo" class="btn-presentador rojo">⚠️ REINICIAR TODO</button></div></div>
+      </section>
+
+      <section class="panel panel-pregunta">
+        <h2 class="panel-titulo">🎯 PREGUNTA ACTIVA</h2>
+        <div class="pregunta-actual"><div class="pregunta-display"><span class="estado-label">Pregunta:</span><p id="pregunta" class="pregunta-texto">—</p></div><h3 class="editor-label">Respuestas en tiempo real:</h3><div class="respuestas-grid" id="respuestas"></div></div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-titulo">👥 GESTIÓN DE JUGADORES</h2>
+        <div id="listaJugadoresDetallada" class="lista-jugadores-detallada"><div class="sin-jugadores">👾 ESPERANDO JUGADORES...</div></div>
+        <div class="estadisticas-jugadores"><p id="contadorJugadoresDetallado">Total: 0/6 jugadores activos</p></div>
+      </section>
+    </main>
+
+    <footer class="footer-presentador">CRUZ ROJA MEXICANA - CIUDAD DE PUEBLA | MODO PRESENTADOR v3.0 | © 2025</footer>
+  </div>
+
+  <script type="module" src="presentador.js"></script>
+</body>
+</html>

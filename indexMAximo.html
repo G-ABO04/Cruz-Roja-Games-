@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cruz Roja Games</title>
+  <meta name="description" content="Cruz Roja Games – Plataforma educativa de juegos para niños." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ░░ SPLASH ░░ -->
+  <div id="splash" class="splash" aria-hidden="true">
+    <div class="splash-inner">
+      <div class="splash-cross" id="splash-cross">
+        <svg viewBox="0 0 5 5" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="0" width="3" height="1" fill="#EE3224"/>
+          <rect x="0" y="1" width="5" height="3" fill="#EE3224"/>
+          <rect x="1" y="4" width="3" height="1" fill="#EE3224"/>
+        </svg>
+      </div>
+      <span class="splash-name" id="splash-name">CRUZ ROJA GAMES</span>
+    </div>
+  </div>
+
+  <!-- ░░ CANVAS PARTÍCULAS ░░ -->
+  <canvas id="canvas-bg" aria-hidden="true"></canvas>
+
+  <!-- ░░ PANTALLA PRINCIPAL ░░ -->
+  <main class="main-screen" id="main-screen" role="main">
+
+    <!-- TOP BAR -->
+    <header class="top-bar" id="top-bar" role="banner">
+
+      <!-- Logo (5 clicks = admin) -->
+      <button class="top-logo" id="logo-btn" aria-label="Cruz Roja Games">
+        <div class="logo-cross" aria-hidden="true">
+          <svg viewBox="0 0 5 5" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="0" width="3" height="1" fill="#EE3224"/>
+            <rect x="0" y="1" width="5" height="3" fill="#EE3224"/>
+            <rect x="1" y="4" width="3" height="1" fill="#EE3224"/>
+          </svg>
+        </div>
+        <span class="logo-text">CRUZ ROJA GAMES</span>
+      </button>
+
+      <!-- Controles derecha -->
+      <div class="top-controls">
+        <!-- Botón administrador (visible hasta que se finalice) -->
+        <button class="admin-btn" id="admin-btn" aria-label="Abrir panel de administrador">
+          ⚙️ Admin
+        </button>
+        <!-- Toggle modo oscuro -->
+        <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar modo de color">
+          <span class="theme-icon-light" aria-hidden="true">☀️</span>
+          <span class="theme-icon-dark"  aria-hidden="true">🌙</span>
+        </button>
+      </div>
+
+    </header>
+
+    <!-- CENTRO -->
+    <section class="center-block" id="center-block" aria-labelledby="title-games">
+
+      <!-- Título -->
+      <div class="title-wrap" id="title-wrap">
+        <div class="presents-tag">Presenta</div>
+        <h1 class="game-title" id="title-games">
+          <span class="title-top">CRUZ ROJA</span>
+          <span class="title-bottom">GAMES</span>
+        </h1>
+        <p class="game-subtitle">Aprende · Juega · Salva Vidas</p>
+      </div>
+
+      <!-- Progreso de misiones -->
+      <div class="progress-wrap" id="progress-wrap" aria-label="Progreso">
+        <div class="progress-step" id="step-1" data-step="1">
+          <div class="step-icon">🚑</div>
+          <div class="step-label">Misión 1</div>
+        </div>
+        <div class="progress-line" id="line-1" aria-hidden="true"></div>
+        <div class="progress-step" id="step-2" data-step="2">
+          <div class="step-icon">🩺</div>
+          <div class="step-label">Misión 2</div>
+        </div>
+        <div class="progress-line" id="line-2" aria-hidden="true"></div>
+        <div class="progress-step" id="step-3" data-step="3">
+          <div class="step-icon">❤️</div>
+          <div class="step-label">Misión 3</div>
+        </div>
+      </div>
+
+      <!-- BOTÓN PLAY -->
+      <button class="play-btn" id="btn-play" aria-label="Comenzar juego">
+        <span class="play-icon" aria-hidden="true">▶</span>
+        <span class="play-text" id="play-text">¡JUGAR!</span>
+      </button>
+
+      <p class="play-hint" id="play-hint">Presiona para comenzar tu misión</p>
+
+    </section>
+
+    <footer class="bottom-bar" role="contentinfo">
+      <p>© Cruz Roja Mexicana · Plataforma Educativa</p>
+    </footer>
+  </main>
+
+  <!-- ░░ OVERLAY DEL JUEGO ░░ -->
+  <div class="game-overlay" id="game-overlay" role="dialog" aria-modal="true" aria-label="Juego activo">
+    <div class="game-topbar" id="game-topbar">
+      <div class="gbar-logo" aria-hidden="true">
+        <svg viewBox="0 0 5 5" xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;">
+          <rect x="1" y="0" width="3" height="1" fill="#EE3224"/>
+          <rect x="0" y="1" width="5" height="3" fill="#EE3224"/>
+          <rect x="1" y="4" width="3" height="1" fill="#EE3224"/>
+        </svg>
+        <span id="current-game-label">Misión 1</span>
+      </div>
+      <button class="gbar-btn" id="btn-exit-game" aria-label="Salir al menú">Salir</button>
+    </div>
+    <div class="game-loader" id="game-loader" aria-live="polite">
+      <div class="loader-cross" aria-hidden="true">
+        <svg viewBox="0 0 5 5" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="0" width="3" height="1" fill="#EE3224"/>
+          <rect x="0" y="1" width="5" height="3" fill="#EE3224"/>
+          <rect x="1" y="4" width="3" height="1" fill="#EE3224"/>
+        </svg>
+      </div>
+      <p class="loader-text">Cargando misión…</p>
+    </div>
+    <iframe id="game-iframe" title="Juego educativo Cruz Roja"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock"></iframe>
+  </div>
+
+  <!-- ░░ FELICITACIÓN ░░ -->
+  <div class="congrats-screen" id="congrats-screen" role="dialog" aria-modal="true" aria-labelledby="congrats-title">
+    <div class="congrats-card">
+      <div class="congrats-cross" aria-hidden="true">
+        <svg viewBox="0 0 5 5" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="0" width="3" height="1" fill="white"/>
+          <rect x="0" y="1" width="5" height="3" fill="white"/>
+          <rect x="1" y="4" width="3" height="1" fill="white"/>
+        </svg>
+      </div>
+      <h2 class="congrats-title" id="congrats-title">🎉 ¡Misión Cumplida!</h2>
+      <p class="congrats-text">Completaste todas las misiones.<br/>¡Eres un héroe de la Cruz Roja!</p>
+      <button class="congrats-btn" id="btn-restart" aria-label="Volver al inicio">← Volver al inicio</button>
+    </div>
+  </div>
+
+  <!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       PANEL DE ADMINISTRADOR
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+  <div class="admin-panel" id="admin-panel" role="dialog" aria-modal="true" aria-labelledby="admin-title">
+    <div class="admin-inner">
+
+      <!-- ── VISTA: PANEL PRINCIPAL ── -->
+      <div id="admin-view-main">
+
+        <div class="admin-header">
+          <div class="admin-header-left">
+            <svg viewBox="0 0 5 5" style="width:26px;height:26px;" xmlns="http://www.w3.org/2000/svg">
+              <rect x="1" y="0" width="3" height="1" fill="#EE3224"/>
+              <rect x="0" y="1" width="5" height="3" fill="#EE3224"/>
+              <rect x="1" y="4" width="3" height="1" fill="#EE3224"/>
+            </svg>
+            <h2 id="admin-title" class="admin-title">Panel de Administrador</h2>
+          </div>
+          <button class="admin-close" id="btn-close-admin" aria-label="Cerrar panel">✕</button>
+        </div>
+
+        <div class="admin-info">
+          <p>Configura el nombre de cada juego, copia su carpeta y activa el toggle.</p>
+        </div>
+
+        <!-- Juegos -->
+        <div class="admin-games" id="admin-games">
+
+          <!-- Juego 1 -->
+          <div class="admin-game-row" id="admin-row-1">
+            <div class="agr-info">
+              <div class="agr-name-wrap">
+                <span class="agr-icon" aria-hidden="true">🚑</span>
+                <input
+                  class="agr-name-input"
+                  id="name-input-1"
+                  data-game="1"
+                  type="text"
+                  maxlength="32"
+                  placeholder="Nombre del Juego 1"
+                  aria-label="Nombre del juego 1"
+                />
+              </div>
+              <code class="agr-path">games/game1/index.html</code>
+            </div>
+            <div class="agr-status">
+              <span class="status-dot" id="dot-1"></span>
+              <span id="status-text-1">—</span>
+            </div>
+            <label class="agr-toggle" for="toggle-1" aria-label="Activar juego 1">
+              <input type="checkbox" id="toggle-1" data-game="1" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <!-- Juego 2 -->
+          <div class="admin-game-row" id="admin-row-2">
+            <div class="agr-info">
+              <div class="agr-name-wrap">
+                <span class="agr-icon" aria-hidden="true">🩺</span>
+                <input
+                  class="agr-name-input"
+                  id="name-input-2"
+                  data-game="2"
+                  type="text"
+                  maxlength="32"
+                  placeholder="Nombre del Juego 2"
+                  aria-label="Nombre del juego 2"
+                />
+              </div>
+              <code class="agr-path">games/game2/index.html</code>
+            </div>
+            <div class="agr-status">
+              <span class="status-dot" id="dot-2"></span>
+              <span id="status-text-2">—</span>
+            </div>
+            <label class="agr-toggle" for="toggle-2" aria-label="Activar juego 2">
+              <input type="checkbox" id="toggle-2" data-game="2" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <!-- Juego 3 -->
+          <div class="admin-game-row" id="admin-row-3">
+            <div class="agr-info">
+              <div class="agr-name-wrap">
+                <span class="agr-icon" aria-hidden="true">❤️</span>
+                <input
+                  class="agr-name-input"
+                  id="name-input-3"
+                  data-game="3"
+                  type="text"
+                  maxlength="32"
+                  placeholder="Nombre del Juego 3"
+                  aria-label="Nombre del juego 3"
+                />
+              </div>
+              <code class="agr-path">games/game3/index.html</code>
+            </div>
+            <div class="agr-status">
+              <span class="status-dot" id="dot-3"></span>
+              <span id="status-text-3">—</span>
+            </div>
+            <label class="agr-toggle" for="toggle-3" aria-label="Activar juego 3">
+              <input type="checkbox" id="toggle-3" data-game="3" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+        </div>
+
+        <!-- Instrucciones -->
+        <div class="admin-instructions">
+          <h3>📁 Cómo insertar un juego</h3>
+          <div class="admin-warning">
+            ⚠️ <strong>Importante:</strong> Antes de copiar tu juego, <strong>borra el archivo
+            <code>index.html</code> de prueba</strong> que ya existe dentro de la carpeta
+            (<code>games/game1/</code>, <code>games/game2/</code> o <code>games/game3/</code>).
+            Ese archivo es solo un marcador de lugar y debe ser reemplazado por tu juego real.
+          </div>
+          <ol>
+            <li>Extrae el <strong>.zip</strong> de tu compañero.</li>
+            <li><strong>Elimina</strong> el <code>index.html</code> de prueba de la carpeta destino.</li>
+            <li>Copia <strong>todos los archivos de tu juego</strong> dentro de <code>games/game1/</code> (o game2, game3).</li>
+            <li>Verifica que haya un archivo <code>index.html</code> (el de tu juego real) dentro.</li>
+            <li>Escribe el nombre del juego en el campo de arriba y activa el toggle.</li>
+          </ol>
+          <p class="admin-note">💡 Para abrir este panel: haz clic 5 veces sobre el logo "CRUZ ROJA GAMES".</p>
+        </div>
+
+        <!-- Botón "Terminado" — aparece cuando los 3 están activos -->
+        <div class="admin-footer" id="admin-done-wrap">
+          <button class="admin-done-btn" id="btn-admin-done" aria-label="Marcar como terminado y previsualizar">
+            ✓ Terminado — Previsualizar
+          </button>
+          <p class="admin-done-hint" id="admin-done-hint">Activa los 3 juegos para habilitar este botón.</p>
+        </div>
+
+      </div><!-- /admin-view-main -->
+
+    </div><!-- /admin-inner -->
+  </div><!-- /admin-panel -->
+
+  <!-- ░░ BARRA DE PREVISUALIZACIÓN ░░ -->
+  <div class="preview-bar" id="preview-bar" role="dialog" aria-modal="false" aria-label="Modo previsualización">
+    <span class="preview-label">👁 Modo Previsualización</span>
+    <div class="preview-actions">
+      <button class="preview-back-btn" id="btn-preview-back" aria-label="Volver al panel de administrador">
+        ← Hacer cambios
+      </button>
+      <button class="preview-finish-btn" id="btn-preview-finish" aria-label="Finalizar y cerrar administrador">
+        Finalizar ✓
+      </button>
+    </div>
+  </div>
+
+  <!-- ░░ MODAL DE CONFIRMACIÓN FINAL ░░ -->
+  <div class="confirm-modal" id="confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="confirm-card">
+      <div class="confirm-icon" aria-hidden="true">⚠️</div>
+      <h3 class="confirm-title" id="confirm-title">¿Finalizar para siempre?</h3>
+      <p class="confirm-text">
+        El botón de administrador será <strong>eliminado permanentemente</strong>.<br/>
+        Ya no se podrá acceder al panel de configuración.<br/>
+        Esta acción <strong>no se puede deshacer</strong>.
+      </p>
+      <div class="confirm-actions">
+        <button class="confirm-cancel-btn" id="btn-confirm-cancel" aria-label="Cancelar">
+          Cancelar
+        </button>
+        <button class="confirm-ok-btn" id="btn-confirm-ok" aria-label="Confirmar y eliminar acceso">
+          Sí, finalizar para siempre
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

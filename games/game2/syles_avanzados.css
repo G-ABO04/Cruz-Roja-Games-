@@ -1,0 +1,249 @@
+
+/* ===== PARTE 1: ILUMINACIÓN GLOBAL (NON-SPOILER) ===== */
+
+/* ESTILO CUANDO SE ARRASTRA UN ITEM (FEEDBACK GLOBAL) */
+/* Al arrastrar, TODAS las zonas se iluminan suavemente para mostrar que son interactivas */
+#scenarioMapContainer.dragging-active .interactive-zone {
+    /* Relleno amarillo muy sutil */
+    background-color: rgba(255, 235, 59, 0.15) !important;
+
+    /* Brillo difuso tipo "Glow" */
+    box-shadow:
+        inset 0 0 20px rgba(255, 235, 59, 0.6),
+        0 0 10px rgba(255, 215, 0, 0.8) !important;
+
+    /* Borde sutil guía visual */
+    border: 1px dashed rgba(255, 255, 255, 0.5) !important;
+
+    /* Transición suave */
+    transition: all 0.3s ease !important;
+
+    /* Permitir animaciones solo durante drag */
+    animation: globalGlow 2s ease-in-out infinite alternate !important;
+}
+
+/* Animación de pulso suave para todas las zonas */
+@keyframes globalGlow {
+    0% {
+        box-shadow:
+            inset 0 0 20px rgba(255, 235, 59, 0.6),
+            0 0 10px rgba(255, 215, 0, 0.8);
+    }
+
+    100% {
+        box-shadow:
+            inset 0 0 30px rgba(255, 235, 59, 0.8),
+            0 0 15px rgba(255, 215, 0, 1);
+    }
+}
+
+/* Eliminar hover específico que delate respuestas */
+.drop-zone:hover,
+.interactive-zone:not(.zone-success-flash):not(.zone-error-flash):hover {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* ===== PARTE 2: REDISEÑO MODAL DE VICTORIA ===== */
+
+.final-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(5px);
+}
+
+.final-content {
+    background: white;
+    border-radius: 25px;
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+    animation: victorySlideUp 0.6s ease;
+    overflow: hidden;
+}
+
+/* Barra superior roja */
+.final-content::before {
+    content: '¡MISIÓN CUMPLIDA!';
+    display: block;
+    background: linear-gradient(135deg, #CE1126 0%, #a00e1f 100%);
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 700;
+    padding: 25px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 4px 12px rgba(206, 17, 38, 0.4);
+}
+
+.final-content h2 {
+    font-size: 2rem;
+    color: var(--cruz-roja-red);
+    margin: 30px 0 20px 0;
+    display: none;
+    /* Ocultamos el h2 original, usamos el ::before */
+}
+
+/* Estrellas grandes */
+.final-stars {
+    font-size: 4rem;
+    margin: 20px 0;
+    letter-spacing: 10px;
+}
+
+.final-stars.high-score {
+    color: #FFD700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    animation: starShine 1s ease-in-out infinite alternate;
+}
+
+.final-stars.low-score {
+    color: #ccc;
+    filter: grayscale(0.5);
+}
+
+@keyframes starShine {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+/* Porcentaje promedio */
+.final-average {
+    font-size: 5rem;
+    font-weight: 700;
+    margin: 20px 0;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.final-average.low {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Estadísticas */
+.final-stats {
+    font-size: 1.4rem;
+    margin: 25px 0;
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 15px;
+    display: inline-block;
+}
+
+.stat-correct {
+    color: var(--success-green);
+    font-weight: 700;
+    font-size: 1.6rem;
+}
+
+.stat-incorrect {
+    color: var(--error-red);
+    font-weight: 700;
+    font-size: 1.6rem;
+}
+
+/* Puntuación final */
+.final-score {
+    font-size: 2rem;
+    color: var(--text-dark);
+    margin: 25px 0 35px 0;
+    font-weight: 700;
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+    border-radius: 50px;
+    display: inline-block;
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+/* Botón reiniciar mejorado */
+.btn-restart {
+    background: linear-gradient(135deg, var(--cruz-roja-red) 0%, #a00e1f 100%);
+    color: white;
+    border: none;
+    padding: 20px 60px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(206, 17, 38, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+}
+
+.btn-restart:hover {
+    background: linear-gradient(135deg, #a00e1f 0%, #8a0c1a 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(206, 17, 38, 0.6);
+}
+
+.btn-restart:active {
+    transform: translateY(-1px);
+}
+
+.btn-restart::before {
+    content: '🔄 ';
+    font-size: 1.6rem;
+}
+
+/* Animación de entrada */
+@keyframes victorySlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(100px) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .final-content::before {
+        font-size: 1.3rem;
+        padding: 20px;
+    }
+
+    .final-stars {
+        font-size: 3rem;
+    }
+
+    .final-average {
+        font-size: 3.5rem;
+    }
+
+    .final-stats {
+        font-size: 1.2rem;
+    }
+
+    .final-score {
+        font-size: 1.5rem;
+    }
+
+    .btn-restart {
+        padding: 15px 40px;
+        font-size: 1.2rem;
+    }
+}

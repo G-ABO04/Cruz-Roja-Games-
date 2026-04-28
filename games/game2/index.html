@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cruz Roja - Juego de Seguridad en Casa</title>
+    <link rel="stylesheet" href="codigo/styles.css">
+    <link rel="stylesheet" href="codigo/syles_avanzados.css">
+</head>
+
+<body>
+
+
+    <div id="startScreen" class="start-screen">
+        <div class="start-content">
+            <img src="iconos/EMBLEMAS - LOCAL 1.png" alt="Cruz Roja Mexicana" class="start-logo">
+            <h1 class="start-title">Juego de Seguridad en Casa</h1>
+            <button class="btn-start" onclick="startGame()">
+                <span class="btn-icon">🎮</span>
+                Iniciar Juego
+            </button>
+            <div class="start-instructions">
+                <h3>📋 Instrucciones</h3>
+                <p><strong>Opción 1:</strong> Arrastra los iconos de seguridad a los lugares correctos en cada
+                    habitación.</p>
+                <p><strong>Opción 2:</strong> Haz click en un icono para seleccionarlo (brillará) y luego click en una
+                    habitación para colocarlo.</p>
+                <p>¡Gana estrellas por cada respuesta correcta!</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="scenarioScreen" class="scenario-screen">
+        <div class="scenario-content">
+            <img src="iconos/EMBLEMAS - LOCAL 1.png" alt="Cruz Roja Mexicana" class="scenario-logo">
+            <h1 class="scenario-title">Selecciona un Escenario</h1>
+            <p class="scenario-subtitle">Elige una situación de emergencia para practicar</p>
+
+            <div class="scenario-grid">
+                <div class="scenario-card" onclick="selectScenario('casa')">
+                    <div class="scenario-image-container">
+                        <img src="fotos/casa.jpg" alt="Casa Familiar">
+                    </div>
+                    <h3>🏠 Casa Familiar</h3>
+                    <p class="scenario-situation">Situación: <strong>Sismo</strong></p>
+                    <p class="scenario-description">Ayuda a proteger una casa durante un terremoto</p>
+                </div>
+
+                <div class="scenario-card" onclick="selectScenario('edificio')">
+                    <div class="scenario-image-container">
+                        <img src="fotos/edificio.jpg" alt="Edificio de Oficinas">
+                    </div>
+                    <h3>🏢 Edificio de Oficinas</h3>
+                    <p class="scenario-situation">Situación: <strong>Incendio Eléctrico</strong></p>
+                    <p class="scenario-description">Responde a un incendio en una oficina</p>
+                </div>
+
+                <div class="scenario-card" onclick="selectScenario('escuela')">
+                    <div class="scenario-image-container">
+                        <img src="fotos/escuela.jpg" alt="Escuela">
+                    </div>
+                    <h3>🏫 Escuela</h3>
+                    <p class="scenario-situation">Situación: <strong>Fuga de Gas / Inundación</strong></p>
+                    <p class="scenario-description">Protege a los estudiantes de múltiples peligros</p>
+                </div>
+            </div>.
+        </div>
+    </div>
+
+
+    <header id="gameHeader">
+        <div class="header-content">
+            <img src="iconos/EMBLEMAS - LOCAL 1.png" alt="Cruz Roja Mexicana - Juego de Seguridad en Casa"
+                class="logo-image">
+        </div>
+        <div class="header-right">
+            <div class="stars-container" id="starsContainer">
+                <span class="star empty">★</span>
+                <span class="star empty">★</span>
+                <span class="star empty">★</span>
+            </div>
+            <button class="btn-restart-header" onclick="restartGame()">
+                🔄 Reiniciar
+            </button>
+        </div>
+    </header>
+
+    <main id="gameMain">
+        <div class="game-container">
+            <section class="croquis-section">
+                <h3 style="color: var(--cruz-roja-red); margin-top: 0;" id="scenarioTitle">📍 Escenario</h3>
+
+                <div class="scenario-map-container" id="scenarioMapContainer">
+                    <img id="scenarioMapImage" src="" alt="Mapa del escenario" class="scenario-map-image">
+
+                    <div id="interactiveZonesContainer" class="interactive-zones-container"></div>
+                </div>
+            </section>
+
+            <section class="sidebar-section">
+                <h3 style="color: var(--cruz-roja-red); margin-top: 0;">⚠️ Elementos de Seguridad</h3>
+
+                <div class="sidebar-grid">
+                    <div class="draggable-item" draggable="true" id="item-extintor">
+                        <img src="iconos/extintor.png" alt="Extintor" class="item-icon-img">
+                        <span class="item-label">Extintor</span>
+                    </div>
+
+                    <div class="draggable-item" draggable="true" id="item-botiquin">
+                        <img src="iconos/botiquin.png" alt="Botiquín" class="item-icon-img">
+                        <span class="item-label">Botiquín Primeros Auxilios</span>
+                    </div>
+
+                    <div class="draggable-item" draggable="true" id="item-ruta">
+                        <img src="iconos/ruta de salida.png" alt="Ruta" class="item-icon-img">
+                        <span class="item-label">Ruta de Evacuación</span>
+                    </div>
+
+                    <div class="draggable-item" draggable="true" id="item-punto">
+                        <img src="iconos/PuntoReunion.png" alt="Punto de Reunión" class="item-icon-img">
+                        <span class="item-label">Punto de Reunión</span>
+                    </div>
+
+                    <div class="draggable-item" draggable="true" id="item-mochila">
+                        <img src="iconos/mochilaemergencia.png" alt="Mochila" class="item-icon-img">
+                        <span class="item-label">Mochila de Emergencia</span>
+                    </div>
+
+                    <div class="draggable-item" draggable="true" id="item-peligro-electrico">
+                        <img src="iconos/simbolo_electricidad.png" alt="Peligro Eléctrico" class="item-icon-img">
+                        <span class="item-label">Peligro por Electricidad</span>
+                    </div>
+
+                    <div class="draggable-item" draggable="true" id="item-extintor-fijo">
+                        <img src="iconos/extintor_fijo.png" alt="Extintor Fijo" class="item-icon-img">
+                        <span class="item-label">Extintor Fijo</span>
+                    </div>
+
+                    <div class="draggable-item" draggable="true" id="item-valvula">
+                        <img src="iconos/valvula.png" alt="Válvula" class="item-icon-img">
+                        <span class="item-label">Válvula de Agua/Gas</span>
+                    </div>
+
+                    <div class="draggable-item" draggable="true" id="item-riesgo">
+                        <img src="iconos/peligro.png" alt="Riesgo" class="item-icon-img">
+                        <span class="item-label">Zona de Riesgo</span>
+                    </div>
+
+                    <div class="draggable-item" draggable="true" id="item-detector">
+                        <img src="iconos/Detector de humo.png" alt="Detector" class="item-icon-img">
+                        <span class="item-label">Detector de Humo</span>
+                    </div>
+
+                </div>
+            </section>
+
+
+            <section class="mascot-section">
+                <h3 style="color: var(--cruz-roja-red); margin-top: 0;">🎭 Ayudante</h3>
+                <div class="mascot-feedback-container" id="mascotFeedbackArea">
+                    <div class="mascot-dialog" id="mascotDialog"></div>
+                    <img src="" alt="Reacción personaje" class="mascot-image" id="mascotImage">
+                </div>
+
+                <!-- Personaje "¿Sabías que?" - se asoma por el borde derecho del panel -->
+                <div id="sabiasQueContainer" class="sabias-que-container" style="display:none;">
+                    <div class="sabias-que-bubble" id="sabiasQueBubble">
+                        <span class="sabias-que-text" id="sabiasQueText"></span>
+                    </div>
+                    <img src="iconos/mujer.png" alt="Personaje Cruz Roja" class="sabias-que-character"
+                        id="sabiasQueCharacter">
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <div class="final-screen" id="finalScreen">
+        <div class="final-content">
+            <h2>¡Juego Completado!</h2>
+            <div class="final-average" id="finalAverage">0%</div>
+            <div class="final-stats">
+                <span class="stat-correct" id="statCorrect">Correctas: 0</span> |
+                <span class="stat-incorrect" id="statIncorrect">Incorrectas: 0</span>
+            </div>
+            <div class="final-score" id="finalScore">Puntuación: 0</div>
+            <button class="btn-restart" onclick="restartGame()">Reiniciar Juego</button>
+        </div>
+    </div>
+
+
+
+    <script src="codigo/script.js"></script>
+
+</body>
+
+</html>

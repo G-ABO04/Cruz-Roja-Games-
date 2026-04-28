@@ -1,0 +1,1156 @@
+/* =========================
+   RESET + FUENTE
+========================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Press Start 2P', cursive;
+  min-height: 100vh;
+  color: #000;
+  background-image: url("assets/img/fondo.png");
+  background-repeat: repeat-x;
+  background-position: bottom;
+  background-size: cover;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* =========================
+   PERSONAJES LATERALES
+========================= */
+.side-character {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(380px, 28vw);
+  image-rendering: pixelated;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+.left-character {
+  left: max(20px, 2vw);
+}
+
+.right-character {
+  right: max(20px, 2vw);
+}
+
+@media (min-height: 900px) {
+  .side-character {
+    width: min(420px, 30vw);
+    top: 45%;
+  }
+}
+
+@media (max-height: 700px) {
+  .side-character {
+    width: min(280px, 25vw);
+    top: 45%;
+  }
+}
+
+/* =========================
+   OVERLAYS
+========================= */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: #E30613;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ===== MODALES MEJORADOS ===== */
+.overlay.modal {
+  background: rgba(227, 6, 19, 0.95);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+}
+
+.overlay.modal .card {
+  animation: aparecer 0.3s ease;
+  max-width: 90vw;
+  width: 400px;
+}
+
+#blockedModal .card h2 {
+  color: #ffcc00;
+  text-shadow: 2px 2px 0 #000;
+}
+
+#expulsadoModal .card h2 {
+  color: #E30613;
+  text-shadow: 2px 2px 0 #000;
+}
+
+/* ===== NUEVO: PANTALLA DE TRANSICIÓN DE RONDA ===== */
+#rondaTransicionScreen {
+  background: linear-gradient(135deg, #E30613, #ff6b6b);
+  animation: pulse-bg 2s infinite;
+}
+
+#rondaTransicionScreen .card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 4px solid #000;
+  animation: bounce-in 0.5s ease;
+}
+
+#rondaTransicionScreen h1 {
+  color: #E30613;
+  text-shadow: 3px 3px 0 #000;
+  animation: glow 1.5s infinite alternate;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #E30613;
+  border-top: 4px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes pulse-bg {
+  0%, 100% { background: linear-gradient(135deg, #E30613, #ff6b6b); }
+  50% { background: linear-gradient(135deg, #ff6b6b, #E30613); }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes glow {
+  from { text-shadow: 3px 3px 0 #000, 0 0 10px #E30613; }
+  to { text-shadow: 3px 3px 0 #000, 0 0 20px #E30613, 0 0 30px #E30613; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== CLASE SMALL (FIX) ===== */
+.small {
+  font-size: 10px;
+  margin-top: 10px;
+  opacity: 0.7;
+}
+
+#blockedModal .card .small,
+#expulsadoModal .card .small {
+  color: #ddd;
+}
+
+/* ===== BOTÓN EN MODALES ===== */
+#expulsadoModal .card button {
+  background: #E30613;
+  color: white;
+  border: 3px solid #000;
+  padding: 15px 30px;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Press Start 2P', cursive;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+#expulsadoModal .card button:hover {
+  background: #ff4444;
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(227, 6, 19, 0.5);
+}
+
+@keyframes aparecer {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.current-turn-badge {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 210;
+  background: rgba(255, 255, 255, 0.95);
+  border: 4px solid #000;
+  padding: 14px 18px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #000;
+  text-transform: uppercase;
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.9);
+  max-width: 220px;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.current-turn-badge strong {
+  display: block;
+  margin-top: 6px;
+  color: #E30613;
+}
+
+@media (max-width: 620px) {
+  .current-turn-badge {
+    top: 12px;
+    right: 12px;
+    padding: 10px 12px;
+    font-size: 10px;
+    max-width: 180px;
+  }
+}
+
+/* =========================
+   CARD
+========================= */
+.card {
+  background: #ffffff;
+  border: 6px solid #000;
+  box-shadow: 12px 12px 0 #000;
+  padding: clamp(20px, 5vw, 40px);
+  text-align: center;
+  width: min(95%, 600px);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.logo-start {
+  width: clamp(120px, 22vw, 240px);
+  margin-bottom: 20px;
+}
+
+.card h1 {
+  font-size: clamp(18px, 3.5vw, 30px);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.card h2 {
+  font-size: clamp(10px, 2vw, 16px);
+  margin-bottom: 15px;
+}
+
+.card .subtitle {
+  font-size: clamp(12px, 2.2vw, 18px);
+  margin-bottom: 20px;
+  color: #E30613;
+}
+
+.card input,
+.card select {
+  width: 100%;
+  padding: clamp(12px, 2vw, 15px);
+  margin: 10px 0;
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(10px, 2vw, 12px);
+  border: 4px solid #000;
+  background: #fff;
+}
+
+.card button {
+  margin-top: 30px;
+  padding: clamp(12px, 2vw, 16px) clamp(24px, 4vw, 34px);
+  font-size: clamp(12px, 2.5vw, 18px);
+  background: #E30613;
+  color: #fff;
+  border: 4px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  max-width: 300px;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.card button:hover {
+  background: #ff3b3b;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #000;
+}
+
+/* =========================
+   CONTENEDOR DEL JUEGO
+========================= */
+.game-wrapper {
+  width: min(85vw, 1000px);
+  margin: 0 auto;
+  padding: clamp(16px, 3vw, 24px);
+  position: relative;
+  z-index: 10;
+}
+
+/* =========================
+   HEADER
+========================= */
+.top {
+  background: #E30613;
+  border: 6px solid #000;
+  box-shadow: 6px 6px 0 #000;
+  padding: clamp(15px, 3vw, 20px);
+  text-align: center;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.top h1 {
+  font-size: clamp(20px, 4vw, 34px);
+  line-height: 1.4;
+}
+
+.top p {
+  font-size: clamp(8px, 2vw, 14px);
+  margin-top: 10px;
+}
+
+/* =========================
+   MARCADOR CON GLOBAL SCORE INTEGRADO
+========================= */
+.scores {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: clamp(10px, 2vw, 20px);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.team {
+  flex: 1;
+  background: #fff;
+  border: 5px solid #000;
+  box-shadow: 5px 5px 0 #000;
+  padding: clamp(10px, 2vw, 15px);
+  text-align: center;
+  min-width: 120px;
+}
+
+.team h2 {
+  font-size: clamp(10px, 2.2vw, 16px);
+  word-break: break-word;
+}
+
+.team span {
+  display: block;
+  margin-top: 10px;
+  font-size: clamp(20px, 4vw, 34px);
+  font-weight: bold;
+  color: #E30613;
+}
+
+/* ===== GLOBAL SCORE INTEGRADO ===== */
+#globalScoreContainer {
+  flex: 1;
+  min-width: 150px;
+  text-align: center;
+}
+
+#globalScore {
+  background: #fff;
+  border: 4px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  padding: 12px 20px;
+  font-size: clamp(10px, 1.8vw, 14px);
+  font-weight: bold;
+  color: #E30613;
+  font-family: 'Press Start 2P', cursive;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .scores {
+    flex-direction: column;
+  }
+  
+  .team, #globalScoreContainer {
+    width: 100%;
+  }
+  
+  #globalScore {
+    white-space: normal;
+    font-size: 10px;
+    padding: 8px 15px;
+  }
+}
+
+/* =========================
+   PREGUNTA
+========================= */
+.game {
+  background: #fff;
+  border: 6px solid #000;
+  box-shadow: 6px 6px 0 #000;
+  padding: clamp(15px, 3vw, 20px);
+  margin-bottom: 20px;
+}
+
+#questionText {
+  font-size: clamp(14px, 2.8vw, 22px);
+  margin-bottom: 20px;
+  line-height: 1.6;
+  word-break: break-word;
+  text-align: center;
+}
+
+/* =========================
+   RESPUESTAS
+========================= */
+.answers {
+  perspective: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.answer {
+  margin: 0 auto;
+  width: 100%;
+  min-height: clamp(50px, 7vw, 70px);
+  border: 4px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  position: relative;
+  background: #E30613;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.answer:hover:not(.revealed) {
+  transform: scale(1.02);
+  box-shadow: 6px 6px 0 #000;
+}
+
+.answer::before {
+  content: "?";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #E30613;
+  color: #ffffff;
+  font-size: clamp(20px, 5vw, 32px);
+  font-weight: bold;
+  backface-visibility: hidden;
+}
+
+.answer::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: #ffdede;
+  color: #000;
+  font-size: clamp(11px, 2.2vw, 16px);
+  padding: clamp(8px, 2vw, 12px);
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+  word-break: break-word;
+}
+
+.answer.revealed {
+  transform: rotateY(180deg);
+}
+
+/* =========================
+   ERRORES
+========================= */
+.errors {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: clamp(15px, 3vw, 25px) !important;
+  margin: 15px 0 5px !important;
+  padding: 10px !important;
+  min-height: 40px !important;
+  flex-wrap: wrap !important;
+}
+
+.errors span {
+  display: inline-block !important;
+  font-family: 'Press Start 2P', cursive !important;
+  font-size: clamp(20px, 4vw, 28px) !important;
+  line-height: 1 !important;
+  color: #ccc !important;
+  transition: all 0.3s ease;
+}
+
+.errors span.active {
+  color: #E30613 !important;
+  transform: scale(1.2);
+  text-shadow: 2px 2px 0 #000;
+}
+
+/* =========================
+   INPUT AREA
+========================= */
+.input-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border: 4px solid #000;
+  box-shadow: 4px 4px 0 #000;
+}
+
+#turno {
+  font-size: clamp(12px, 2.2vw, 16px);
+  text-align: center;
+  word-break: break-word;
+  color: #E30613;
+  font-weight: bold;
+}
+
+/* ===== INPUT LABEL DINÁMICO ===== */
+.input-label {
+  font-size: clamp(10px, 2vw, 12px);
+  color: #E30613;
+  margin-bottom: 5px;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.input-label.bloqueado {
+  color: #ffcc00;
+}
+
+.input-label.expulsado {
+  color: #E30613;
+  text-decoration: line-through;
+}
+
+#respuesta {
+  width: 100%;
+  padding: clamp(12px, 2vw, 15px);
+  font-size: clamp(12px, 2.2vw, 16px);
+  border: 4px solid #000;
+  background: #fff;
+  font-family: 'Press Start 2P', cursive;
+  transition: all 0.3s ease;
+}
+
+#respuesta.turno-activo {
+  background: #eaffea;
+  border-color: #00aa00;
+  box-shadow: 0 0 5px rgba(0, 170, 0, 0.3);
+}
+
+#respuesta.no-turno {
+  background: #fff3cd;
+  border-color: #ffcc00;
+}
+
+#respuesta.bloqueado,
+#respuesta:disabled {
+  background: #e0e0e0;
+  color: #999;
+  border-color: #aaa;
+  cursor: not-allowed;
+}
+
+#btnEnviar {
+  padding: clamp(12px, 2vw, 15px) clamp(25px, 4vw, 40px);
+  font-size: clamp(14px, 2.5vw, 20px);
+  background: #E30613;
+  color: #fff;
+  border: 4px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Press Start 2P', cursive;
+  width: 100%;
+  max-width: 250px;
+}
+
+#btnEnviar:hover:not(:disabled) {
+  background: #ff3b3b;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #000;
+}
+
+#btnEnviar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================
+   EMBLEMA
+========================= */
+.emblema {
+  position: fixed;
+  right: clamp(10px, 2vw, 20px);
+  bottom: clamp(10px, 2vw, 20px);
+  width: clamp(80px, 15vw, 150px);
+  image-rendering: pixelated;
+  z-index: 20;
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+.emblema:hover {
+  opacity: 1;
+}
+
+/* =========================
+   FOOTER
+========================= */
+footer {
+  margin-top: 30px;
+  text-align: center;
+  padding: 10px;
+}
+
+footer p {
+  background: #E30613;
+  color: white;
+  padding: 12px 25px;
+  display: inline-block;
+  border: 4px solid black;
+  box-shadow: 4px 4px 0 black;
+  font-size: clamp(10px, 1.8vw, 14px);
+  font-weight: bold;
+}
+
+/* =========================
+   GAME OVER ÉPICO
+========================= */
+#gameOverText {
+  font-size: clamp(18px, 4vw, 28px);
+  margin: 30px 0;
+  line-height: 1.5;
+  color: #E30613;
+  font-weight: bold;
+  text-shadow: 3px 3px 0 #000;
+  animation: ganadorPop 0.5s ease;
+}
+
+#gameOverText span {
+  font-size: 14px;
+  display: block;
+  margin-top: 10px;
+  color: #000;
+  text-shadow: none;
+}
+
+@keyframes ganadorPop {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* =========================
+   RESPONSIVE FINAL
+========================= */
+@media (max-width: 768px) {
+  body {
+    background-attachment: fixed;
+  }
+  
+  .side-character {
+    display: none;
+  }
+  
+  .game-wrapper {
+    width: 95vw;
+    padding: 10px;
+  }
+  
+  .answers {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .input-area {
+    position: sticky;
+    bottom: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.95);
+    margin-top: 20px;
+  }
+  
+  .answer {
+    min-height: 50px;
+  }
+  
+  .answer::after {
+    font-size: 11px;
+  }
+  
+  .overlay.modal .card {
+    width: 90vw;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .answer::before {
+    font-size: 18px;
+  }
+  
+  .answer::after {
+    font-size: 9px;
+    padding: 8px;
+  }
+  
+  .input-label {
+    font-size: 9px;
+  }
+  
+  #btnEnviar {
+    font-size: 12px;
+    padding: 10px 20px;
+  }
+}
+
+/* ========================================================
+   NUEVOS ESTILOS AGREGADOS (SIN MODIFICAR LOS EXISTENTES)
+   ======================================================== */
+
+/* ===== ESTILOS PARA EL PRESENTADOR MEJORADO ===== */
+/* Estos estilos solo afectan al presentador, no al juego principal */
+
+/* Editor de Pregunta */
+.editor-pregunta {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.editor-label {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+  color: #ffcc00;
+  margin-top: 10px;
+  letter-spacing: 1px;
+}
+
+.editor-input {
+  background: #0a0a0a;
+  border: 3px solid #ffcc00;
+  padding: 12px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+  color: #00ff80;
+  width: 100%;
+}
+
+.editor-input:focus {
+  outline: none;
+  border-color: #00ffff;
+  box-shadow: 0 0 20px #00ffff;
+}
+
+#respuestasContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.respuestaInput {
+  background: #0a0a0a;
+  border: 2px solid #00ffff;
+  padding: 10px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.6rem;
+  color: white;
+  width: 100%;
+}
+
+.respuestaInput:focus {
+  outline: none;
+  border-color: #00ff80;
+}
+
+/* Control de Turno */
+.control-turno {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(0,0,0,0.3);
+  border: 2px solid #ff0040;
+}
+
+.turno-buttons {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.btn-turno {
+  flex: 1;
+  padding: 12px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+  cursor: pointer;
+  border: 3px solid;
+  transition: all 0.2s;
+  background: #0a0a0a;
+}
+
+.equipo1-btn {
+  border-color: #00ff80;
+  color: #00ff80;
+}
+
+.equipo1-btn:hover {
+  background: #00ff80;
+  color: #0a0a0a;
+  transform: translate(-2px, -2px);
+}
+
+.equipo2-btn {
+  border-color: #00ffff;
+  color: #00ffff;
+}
+
+.equipo2-btn:hover {
+  background: #00ffff;
+  color: #0a0a0a;
+  transform: translate(-2px, -2px);
+}
+
+.turno-display {
+  text-align: center;
+  font-size: 1rem;
+  padding: 10px;
+  background: #0a0a0a;
+  border: 3px solid #ffcc00;
+  margin-top: 10px;
+  font-family: 'VT323', monospace;
+  font-size: 1.2rem;
+  font-weight: bold;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Revelar Respuestas */
+.control-respuestas {
+  margin-bottom: 20px;
+}
+
+.respuestas-revelar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.btn-revelar {
+  padding: 10px;
+  background: #0a0a0a;
+  border: 2px solid #00ffff;
+  color: #00ffff;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-revelar:hover {
+  background: #00ffff;
+  color: #0a0a0a;
+  transform: translate(-2px, -2px);
+}
+
+.btn-revelar.revelado {
+  background: #00ff80;
+  border-color: #ffcc00;
+  color: #0a0a0a;
+  opacity: 0.7;
+  cursor: default;
+}
+
+.btn-revelar.revelado:hover {
+  transform: none;
+}
+
+/* Puntos Manuales */
+.control-puntos {
+  margin-bottom: 20px;
+}
+
+.puntos-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-puntos {
+  flex: 1;
+  padding: 10px;
+  background: #0a0a0a;
+  border: 2px solid #ffcc00;
+  color: #ffcc00;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-puntos:hover {
+  background: #ffcc00;
+  color: #0a0a0a;
+  transform: translate(-2px, -2px);
+}
+
+/* Pregunta Display */
+.pregunta-display {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #0a0a0a;
+  border: 3px solid #ff0040;
+}
+
+.pregunta-texto {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8rem;
+  color: #ffcc00;
+  margin-top: 10px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* Lista de Jugadores Detallada */
+.lista-jugadores-detallada {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 5px;
+  background: #0a0f0f;
+  border: 3px solid #00ff80;
+  font-family: 'VT323', monospace;
+}
+
+.jugador-card {
+  background: #0f0f1a;
+  border: 3px solid;
+  padding: 12px;
+  margin-bottom: 10px;
+  transition: all 0.2s;
+}
+
+.jugador-card.equipo1 {
+  border-color: #00ff80;
+}
+
+.jugador-card.equipo2 {
+  border-color: #00ffff;
+}
+
+.jugador-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.jugador-nombre {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+  color: white;
+}
+
+.jugador-equipo {
+  padding: 3px 8px;
+  border: 2px solid;
+  font-size: 0.6rem;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.jugador-estado {
+  font-size: 0.6rem;
+  padding: 3px 8px;
+  background: #0a0a0a;
+  border-radius: 0;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.jugador-estado.activo {
+  color: #00ff80;
+  border: 1px solid #00ff80;
+}
+
+.jugador-estado.bloqueado {
+  color: #ffcc00;
+  border: 1px solid #ffcc00;
+}
+
+.jugador-estado.expulsado {
+  color: #ff0040;
+  border: 1px solid #ff0040;
+}
+
+.jugador-acciones {
+  display: flex;
+  gap: 8px;
+}
+
+.jugador-acciones button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: #0a0a0a;
+  border: 2px solid;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-seleccionar {
+  border-color: #00ff80;
+  color: #00ff80;
+}
+
+.btn-seleccionar:hover {
+  background: #00ff80;
+  color: #0a0a0a;
+}
+
+.btn-bloquear {
+  border-color: #ffcc00;
+  color: #ffcc00;
+}
+
+.btn-bloquear:hover {
+  background: #ffcc00;
+  color: #0a0a0a;
+}
+
+.btn-expulsar {
+  border-color: #ff0040;
+  color: #ff0040;
+}
+
+.btn-expulsar:hover {
+  background: #ff0040;
+  color: #0a0a0a;
+}
+
+.estadisticas-jugadores {
+  margin-top: 10px;
+  padding: 8px;
+  text-align: center;
+  background: #0a0a0a;
+  border: 2px solid #ffcc00;
+}
+
+.estadisticas-jugadores p {
+  font-family: 'VT323', monospace;
+  font-size: 0.8rem;
+  color: #00ff80;
+}
+
+.sin-jugadores {
+  text-align: center;
+  padding: 40px 20px;
+  color: #ffcc00;
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  border: 3px dashed #ff0040;
+  background: #0a0a0a;
+}
+
+/* Estilos para el presentador en responsive */
+@media (max-width: 768px) {
+  .respuestas-revelar-grid,
+  .puntos-buttons,
+  .turno-buttons {
+    flex-direction: column;
+  }
+  
+  .jugador-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .jugador-acciones {
+    width: 100%;
+  }
+  
+  .controles-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.turno-animado {
+  animation: popTurno 0.5s ease;
+}
+
+@keyframes popTurno {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.flash-turno {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 215, 0, 0.3);
+  z-index: 9999;
+  pointer-events: none;
+  animation: flashFade 0.4s ease;
+}
+
+@keyframes flashFade {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}

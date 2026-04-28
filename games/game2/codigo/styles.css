@@ -1,0 +1,1339 @@
+/* ==========================================
+   CRUZ ROJA - JUEGO DE SEGURIDAD V FINAL
+   Archivo de Estilos CSS Completo
+   Ricardo Encarnacion Guerrero AL02999638
+   ========================================== */
+
+/* ===== 1. VARIABLES CSS Y RESET BÁSICO ===== */
+:root {
+    --cruz-roja-red: #CE1126;
+    --cruz-roja-white: #FFFFFF;
+    --text-dark: #333333;
+    --text-light: #666666;
+    --background-light: #F5F5F5;
+    --success-green: #4CAF50;
+    --error-red: #D32F2F;
+    --warning-yellow: #FFD93D;
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-medium: rgba(0, 0, 0, 0.2);
+    --shadow-heavy: rgba(0, 0, 0, 0.3);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: var(--text-dark);
+    overflow-x: hidden;
+}
+
+/* ===== 2. PANTALLA DE INICIO ===== */
+.start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--cruz-roja-red) 0%, #a00e1f 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.5s ease;
+}
+
+.start-content {
+    text-align: center;
+    background: white;
+    padding: 50px 60px;
+    border-radius: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    animation: slideUp 0.6s ease;
+}
+
+.start-logo {
+    width: 180px;
+    height: auto;
+    margin-bottom: 25px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.start-title {
+    font-size: 2rem;
+    color: var(--cruz-roja-red);
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.btn-start {
+    background: var(--cruz-roja-red);
+    color: white;
+    border: none;
+    padding: 18px 50px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(206, 17, 38, 0.4);
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-start:hover {
+    background: #a00e1f;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(206, 17, 38, 0.5);
+}
+
+.btn-start:active {
+    transform: translateY(-1px);
+}
+
+.btn-icon {
+    font-size: 1.5rem;
+}
+
+.start-instructions {
+    margin-top: 30px;
+    text-align: left;
+    background: var(--background-light);
+    padding: 25px;
+    border-radius: 15px;
+    border-left: 5px solid var(--cruz-roja-red);
+}
+
+.start-instructions h3 {
+    color: var(--cruz-roja-red);
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.start-instructions p {
+    margin-bottom: 12px;
+    line-height: 1.6;
+    color: var(--text-dark);
+}
+
+.start-instructions strong {
+    color: var(--cruz-roja-red);
+}
+
+/* ===== 3. PANTALLA DE SELECCIÓN DE ESCENARIO ===== */
+.scenario-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.scenario-content {
+    text-align: center;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.scenario-logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.3));
+}
+
+.scenario-title {
+    font-size: 2.5rem;
+    color: white;
+    margin-bottom: 10px;
+    font-weight: 700;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.scenario-subtitle {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 40px;
+}
+
+.scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.scenario-card {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.scenario-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.scenario-image-container {
+    width: 100%;
+    height: 200px;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.scenario-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.scenario-card h3 {
+    font-size: 1.5rem;
+    color: var(--cruz-roja-red);
+    margin-bottom: 10px;
+}
+
+.scenario-situation {
+    font-size: 1rem;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.scenario-description {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    line-height: 1.5;
+}
+
+/* ===== 4. HEADER DEL JUEGO ===== */
+#gameHeader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    box-shadow: 0 4px 12px var(--shadow-light);
+    padding: 15px 30px;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    height: 80px;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-image {
+    height: 50px;
+    width: auto;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.stars-container {
+    display: flex;
+    gap: 8px;
+}
+
+.star {
+    font-size: 2rem;
+    transition: all 0.3s ease;
+}
+
+.star.empty {
+    color: #ddd;
+}
+
+.star.filled {
+    color: #FFD700;
+    animation: starPop 0.4s ease;
+}
+
+@keyframes starPop {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.3);
+    }
+}
+
+.btn-restart-header {
+    background: var(--cruz-roja-red);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(206, 17, 38, 0.3);
+}
+
+.btn-restart-header:hover {
+    background: #a00e1f;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(206, 17, 38, 0.4);
+}
+
+/* NUEVO: Botón de pista para niños */
+.btn-hint-header {
+    background: linear-gradient(135deg, #FFD93D 0%, #FFC107 100%);
+    color: #333;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+}
+
+.btn-hint-header:hover {
+    background: linear-gradient(135deg, #FFC107 0%, #FFB300 100%);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 16px rgba(255, 193, 7, 0.6);
+}
+
+/* ===== 5. CONTENEDOR PRINCIPAL DEL JUEGO ===== */
+#gameMain {
+    margin-top: 80px;
+    padding: 20px;
+    min-height: calc(100vh - 80px);
+    display: none;
+}
+
+.game-container {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 20px;
+    max-width: 1800px;
+    margin: 0 auto;
+    height: calc(100vh - 120px);
+}
+
+/* ===== 6. SECCIÓN DEL CROQUIS (MAPA) ===== */
+.croquis-section {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 8px 24px var(--shadow-light);
+    display: flex;
+    flex-direction: column;
+}
+
+.croquis-section h3 {
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+/* CONFIGURACIÓN DEL MAPA BASE - 100x60 CSS GRID SYSTEM */
+.scenario-map-container {
+    position: relative;
+    width: 100%;
+    max-width: 1024px;
+    aspect-ratio: 1024/559;
+    margin: 0 auto;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+
+    display: grid;
+    grid-template-columns: repeat(100, 1fr);
+    grid-template-rows: repeat(60, 1fr);
+    transition: background-color 0.3s ease;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.scenario-map-container.feedback-success {
+    background-color: #d4edda !important;
+}
+
+.scenario-map-container.feedback-error {
+    background-color: #f8d7da !important;
+}
+
+.scenario-map-image {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    z-index: 1;
+}
+
+#game-map-image,
+#scenarioMapImage {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    z-index: 1;
+}
+
+/* ===== 7. ZONAS INTERACTIVAS (SISTEMA DE FEEDBACK VISUAL) ===== */
+.interactive-zones-container {
+
+    display: contents;
+}
+
+.interactive-zone {
+    z-index: 20;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    pointer-events: all;
+    transition: all 0.3s ease;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.scenario-map-container.show-hints .interactive-zone {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    border: 2px dashed #FFD700 !important;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+.scenario-map-container.show-hints .interactive-zone:hover {
+    background-color: rgba(40, 167, 69, 0.3) !important;
+    border-color: #28a745 !important;
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(40, 167, 69, 0.6);
+}
+
+.scenario-map-container.show-hints .interactive-zone::after {
+    content: attr(data-label);
+    background: rgba(206, 17, 38, 0.9);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.interactive-zone.zone-correct {
+    background-color: rgba(40, 167, 69, 0.5) !important;
+    border: 3px solid rgba(40, 167, 69, 0.9) !important;
+    box-shadow: 0 0 20px rgba(40, 167, 69, 0.7) !important;
+    animation: successPulse 0.6s ease-out !important;
+}
+
+.interactive-zone.zone-incorrect {
+    background-color: rgba(220, 53, 69, 0.5) !important;
+    border: 3px solid rgba(220, 53, 69, 0.9) !important;
+    box-shadow: 0 0 20px rgba(220, 53, 69, 0.7) !important;
+    animation: errorShake 0.6s ease-out !important;
+}
+
+/* Animación de éxito */
+@keyframes successPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Animación de error */
+@keyframes errorShake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-10px);
+    }
+
+    75% {
+        transform: translateX(10px);
+    }
+}
+
+.interactive-zone.zone-preview {
+    background-color: rgba(255, 215, 0, 0.25) !important;
+    border: 3px solid rgba(255, 215, 0, 0.95) !important;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.7) !important;
+    animation: previewPulse 1.5s ease-in-out infinite !important;
+    z-index: 100 !important;
+}
+
+@keyframes previewPulse {
+
+    0%,
+    100% {
+        opacity: 0.75;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.01);
+    }
+}
+
+.zone-label {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    /* Estilo Compacto */
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+    padding: 2px 8px;
+    /* Padding reducido */
+    border-radius: 4px;
+
+    /* Tipografía */
+    font-size: 0.75rem;
+    /* Letra pequeña pero legible (aprox 12px) */
+    font-weight: 700;
+    text-transform: uppercase;
+    /* Ayuda a la legibilidad */
+    white-space: nowrap;
+    /* Obliga a que sea una sola línea */
+
+    /* Visibilidad */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    z-index: 1000;
+    /* Asegura que flote sobre todo */
+
+    /* Transición suave */
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+
+.scenario-map-container.show-hints .zone-label,
+.interactive-zone:hover .zone-label {
+    opacity: 1;
+}
+
+body.debug-mode .interactive-zone,
+.scenario-map-container.debug-mode .interactive-zone {
+    border: 2px dashed red !important;
+    background-color: rgba(255, 0, 0, 0.1) !important;
+    box-shadow: none !important;
+}
+
+body.debug-mode .zone-label,
+.scenario-map-container.debug-mode .zone-label {
+    opacity: 1 !important;
+    background: rgba(255, 0, 0, 0.9) !important;
+    color: white !important;
+    font-weight: 700 !important;
+}
+
+body.debug-mode .interactive-zone::after,
+.scenario-map-container.debug-mode .interactive-zone::after {
+    content: attr(data-label) !important;
+    background: rgba(255, 0, 0, 0.9) !important;
+    color: white !important;
+    padding: 5px 10px !important;
+    border-radius: 8px !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+}
+
+/* ===== 8. ICONOS COLOCADOS EN ZONAS ===== */
+.placed-item-icon {
+    font-size: 2rem;
+    z-index: 20;
+    pointer-events: none;
+
+
+    width: auto;
+    height: auto;
+    max-width: 50% !important;
+    max-height: 50% !important;
+
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.placed-item-icon img {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain;
+    display: block;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ===== 9. SIDEBAR - ELEMENTOS DE SEGURIDAD ===== */
+.sidebar-section {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 8px 24px var(--shadow-light);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.sidebar-section h3 {
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.sidebar-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 5px;
+}
+
+.draggable-item {
+    background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+    border: 2px solid #e0e0e0;
+    border-radius: 15px;
+    padding: 15px;
+    cursor: grab;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 12px var(--shadow-light);
+}
+
+.draggable-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px var(--shadow-medium);
+    border-color: var(--cruz-roja-red);
+}
+
+.draggable-item:active {
+    cursor: grabbing;
+}
+
+.draggable-item.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.draggable-item.mobile-selected {
+    border-color: var(--cruz-roja-red);
+    background: linear-gradient(135deg, #ffe0e0 0%, #fff5f5 100%);
+    box-shadow: 0 0 20px rgba(206, 17, 38, 0.4);
+    animation: pulse 1s infinite;
+}
+
+.draggable-item.used {
+    opacity: 0.3;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+.item-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+/* NUEVO: Estilo para iconos de imagen */
+.item-icon-img {
+    width: 2.5rem;
+    height: 2.5rem;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.item-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    line-height: 1.3;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(206, 17, 38, 0.4);
+        transform: scale(1);
+    }
+
+    50% {
+        box-shadow: 0 0 30px rgba(206, 17, 38, 0.6);
+        transform: scale(1.05);
+    }
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(5px);
+    }
+}
+
+/* ===== 10. SECCIÓN DE LA MASCOTA (AYUDANTE) ===== */
+.mascot-section {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 8px 24px var(--shadow-light);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.mascot-section h3 {
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.mascot-feedback-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s ease;
+
+    min-height: 200px;
+    max-height: none;
+    height: auto;
+}
+
+.mascot-feedback-container.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mascot-dialog {
+    background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+    border: 3px solid var(--cruz-roja-red);
+    border-radius: 20px;
+    padding: 20px 25px;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-dark);
+    position: relative;
+    box-shadow: 0 8px 24px var(--shadow-light);
+
+    min-height: 80px;
+    max-height: none;
+    height: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow: visible;
+    white-space: normal;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Globo de diálogo - decoración */
+.mascot-dialog::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 15px solid var(--cruz-roja-red);
+}
+
+.mascot-dialog::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 12px solid #ffffff;
+    z-index: 1;
+}
+
+/* Estados de diálogo */
+.mascot-dialog.success {
+    border-color: var(--success-green);
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+}
+
+.mascot-dialog.success::after {
+    border-top-color: var(--success-green);
+}
+
+.mascot-dialog.success::before {
+    border-top-color: #e8f5e9;
+}
+
+.mascot-dialog.error {
+    border-color: var(--error-red);
+    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+}
+
+.mascot-dialog.error::after {
+    border-top-color: var(--error-red);
+}
+
+.mascot-dialog.error::before {
+    border-top-color: #ffebee;
+}
+
+/* Imagen de la mascota */
+.mascot-image {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 12px var(--shadow-medium));
+    transition: transform 0.3s ease;
+}
+
+.mascot-feedback-container.active .mascot-image {
+    animation: mascotBounce 0.6s ease;
+}
+
+@keyframes mascotBounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* ===== 11. PANTALLA FINAL ===== */
+.final-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.final-content {
+    background: white;
+    padding: 50px;
+    border-radius: 30px;
+    text-align: center;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.5s ease;
+}
+
+.final-content h2 {
+    font-size: 2.5rem;
+    color: var(--cruz-roja-red);
+    margin-bottom: 30px;
+}
+
+.final-average {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--success-green);
+    margin-bottom: 20px;
+}
+
+.final-stats {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: var(--text-dark);
+}
+
+.stat-correct {
+    color: var(--success-green);
+    font-weight: 600;
+}
+
+.stat-incorrect {
+    color: var(--error-red);
+    font-weight: 600;
+}
+
+.final-score {
+    font-size: 1.5rem;
+    color: var(--text-dark);
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.btn-restart {
+    background: var(--cruz-roja-red);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(206, 17, 38, 0.4);
+}
+
+.btn-restart:hover {
+    background: #a00e1f;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(206, 17, 38, 0.5);
+}
+
+/* ===== 12. ANIMACIONES ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* NUEVO: Animación de celebración para niños */
+@keyframes celebration {
+
+    0%,
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    25% {
+        transform: scale(1.1) rotate(-5deg);
+    }
+
+    50% {
+        transform: scale(1.15) rotate(5deg);
+    }
+
+    75% {
+        transform: scale(1.1) rotate(-3deg);
+    }
+}
+
+/* Aplicar celebración a la pantalla final */
+.final-screen.celebration-active .final-content {
+    animation: celebration 1s ease-in-out, slideUp 0.5s ease;
+}
+
+@keyframes compatiblePulse {
+    0% {
+        box-shadow:
+            0 0 25px 8px rgba(255, 215, 0, 0.7),
+            0 0 50px 15px rgba(255, 215, 0, 0.35),
+            inset 0 0 40px rgba(255, 235, 100, 0.25);
+    }
+
+    100% {
+        box-shadow:
+            0 0 35px 12px rgba(255, 215, 0, 0.95),
+            0 0 70px 25px rgba(255, 215, 0, 0.55),
+            inset 0 0 60px rgba(255, 235, 100, 0.45);
+    }
+}
+
+@keyframes successFlash {
+    0% {
+        box-shadow:
+            0 0 40px 15px rgba(76, 175, 80, 0.85),
+            0 0 80px 30px rgba(76, 175, 80, 0.45);
+        transform: scale(1);
+    }
+
+    50% {
+        box-shadow:
+            0 0 60px 25px rgba(76, 175, 80, 1),
+            0 0 120px 50px rgba(76, 175, 80, 0.65);
+        transform: scale(1.03);
+    }
+
+    100% {
+        box-shadow:
+            0 0 40px 15px rgba(76, 175, 80, 0.85),
+            0 0 80px 30px rgba(76, 175, 80, 0.45);
+        transform: scale(1);
+    }
+}
+
+@keyframes errorFlash {
+    0% {
+        box-shadow:
+            0 0 40px 15px rgba(211, 47, 47, 0.85),
+            0 0 80px 30px rgba(211, 47, 47, 0.45);
+        transform: scale(1);
+    }
+
+    50% {
+        box-shadow:
+            0 0 60px 25px rgba(211, 47, 47, 1),
+            0 0 120px 50px rgba(211, 47, 47, 0.65);
+        transform: scale(1.03);
+    }
+
+    100% {
+        box-shadow:
+            0 0 40px 15px rgba(211, 47, 47, 0.85),
+            0 0 80px 30px rgba(211, 47, 47, 0.45);
+        transform: scale(1);
+    }
+}
+
+/* ===== 13. RESPONSIVE DESIGN - TABLETS ===== */
+@media (max-width: 1200px) {
+    .game-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        height: auto;
+    }
+
+    .croquis-section {
+        min-height: 400px;
+    }
+
+    .sidebar-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ===== 14. RESPONSIVE DESIGN - MÓVILES ===== */
+@media (max-width: 768px) {
+    #gameHeader {
+        padding: 10px 15px;
+        height: 70px;
+    }
+
+    .logo-image {
+        height: 40px;
+    }
+
+    .star {
+        font-size: 1.5rem;
+    }
+
+    .btn-restart-header {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+
+    #gameMain {
+        margin-top: 70px;
+        padding: 10px;
+    }
+
+    .game-container {
+        gap: 15px;
+    }
+
+    .croquis-section,
+    .sidebar-section,
+    .mascot-section {
+        padding: 15px;
+    }
+
+    .sidebar-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .draggable-item {
+        padding: 12px;
+    }
+
+    .item-icon {
+        font-size: 1.5rem;
+    }
+
+    .item-label {
+        font-size: 0.85rem;
+    }
+
+    /* Overlay móvil para feedback */
+    .mascot-feedback-container.mobile-overlay {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        background: rgba(0, 0, 0, 0.85);
+        padding: 30px;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .mascot-feedback-container.mobile-overlay .mascot-dialog {
+        font-size: 1.1rem;
+        padding: 25px 30px;
+        max-width: 100%;
+        min-height: 100px;
+    }
+
+    .mascot-feedback-container.mobile-overlay .mascot-image {
+        width: 120px;
+        height: 120px;
+    }
+
+    .start-content {
+        padding: 30px 25px;
+    }
+
+    .start-title {
+        font-size: 1.5rem;
+    }
+
+    .btn-start {
+        padding: 15px 35px;
+        font-size: 1.1rem;
+    }
+
+    .scenario-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .scenario-title {
+        font-size: 1.8rem;
+    }
+
+    .placed-item-icon {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .start-logo {
+        width: 120px;
+    }
+
+    .start-title {
+        font-size: 1.3rem;
+    }
+
+    .btn-start {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+
+    .start-instructions {
+        padding: 15px;
+    }
+
+    .scenario-title {
+        font-size: 1.5rem;
+    }
+
+    .final-content {
+        padding: 30px 20px;
+    }
+
+    .final-content h2 {
+        font-size: 1.8rem;
+    }
+
+    .final-average {
+        font-size: 3rem;
+    }
+}
+
+/* ===== 15. UTILIDADES ===== */
+.hidden {
+    display: none !important;
+}
+
+.no-scroll {
+    overflow: hidden;
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--cruz-roja-red);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a00e1f;
+}
+
+
+
+.interactive-zone,
+.drop-zone,
+.room-drop-zone,
+.interactive-zone:hover,
+.drop-zone:hover,
+.room-drop-zone:hover,
+.interactive-zone.drag-over,
+.drop-zone.drag-over,
+.room-drop-zone.drag-over,
+.interactive-zone.zone-highlighted,
+.interactive-zone.zone-compatible,
+.interactive-zone.zone-incompatible {
+
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+
+
+    animation: none !important;
+    transition: none !important;
+}
+
+.zone-label,
+.interactive-zone .zone-label,
+.interactive-zone:hover .zone-label,
+.interactive-zone.zone-highlighted .zone-label {
+    opacity: 0 !important;
+    display: none !important;
+}
+
+.interactive-zone.zone-success-flash {
+    background-color: rgba(76, 175, 80, 0.25) !important;
+    box-shadow:
+        0 0 40px 15px rgba(76, 175, 80, 0.85),
+        0 0 80px 30px rgba(76, 175, 80, 0.45),
+        inset 0 0 50px rgba(100, 255, 100, 0.35) !important;
+    border: 4px solid rgba(76, 175, 80, 0.95) !important;
+    animation: successFlash 0.5s ease-out !important;
+}
+
+.interactive-zone.zone-error-flash {
+    background-color: rgba(211, 47, 47, 0.25) !important;
+    box-shadow:
+        0 0 40px 15px rgba(211, 47, 47, 0.85),
+        0 0 80px 30px rgba(211, 47, 47, 0.45),
+        inset 0 0 50px rgba(255, 100, 100, 0.35) !important;
+    border: 4px solid rgba(211, 47, 47, 0.95) !important;
+    animation: errorFlash 0.5s ease-out !important;
+}
+
+.scenario-map-container.flash-success,
+#map-container-area.flash-success,
+#game-map-container.flash-success {
+    background-color: #d4edda !important;
+}
+
+.scenario-map-container.flash-error,
+#map-container-area.flash-error,
+#game-map-container.flash-error {
+    background-color: #f8d7da !important;
+}
